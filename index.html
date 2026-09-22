@@ -1,204 +1,282 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quotes API Demo & Docs</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran API</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f8fafc;
-      color: #1e293b;
-      line-height: 1.6;
-    }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
-      padding: 50px 20px;
-    }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 50px 20px;
+        }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 32px;
-    }
+        h1 {
+            margin: 0 0 10px;
+            font-size: 36px;
+        }
 
-    .description {
-      color: #64748b;
-      margin-bottom: 30px;
-    }
+        .description {
+            color: #64748b;
+            margin-bottom: 40px;
+        }
 
-    .section {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
+        .section {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
 
-    h2 {
-      margin: 0 0 6px;
-      font-size: 18px;
-    }
+        h2 {
+            margin: 0 0 15px;
+            font-size: 20px;
+        }
 
-    .url {
-      display: block;
-      padding: 10px 15px;
-      margin: 10px 0 15px;
-      border-radius: 5px;
-      background: #f1f5f9;
-      color: #0f172a;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-      word-break: break-all;
-    }
+        .endpoint {
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 5px;
+            background: #f1f5f9;
+            color: #0f172a;
+            text-decoration: none;
+            font-family: Consolas, monospace;
+        }
 
-    input {
-      padding: 8px 10px;
-      margin-right: 8px;
-      border: 1px solid #cbd5e1;
-      border-radius: 5px;
-      width: 200px;
-    }
+        .endpoint:hover {
+            background: #e2e8f0;
+        }
 
-    button {
-      padding: 8px 16px;
-      border: 0;
-      border-radius: 5px;
-      background: #2563eb;
-      color: #fff;
-      cursor: pointer;
-    }
+        .method {
+            color: #16a34a;
+            font-weight: bold;
+            margin-right: 10px;
+        }
 
-    button:hover {
-      background: #1d4ed8;
-    }
+        pre {
+            margin: 15px 0 0;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
 
-    .quote {
-      margin-top: 12px;
-      padding: 12px 15px;
-      border-left: 3px solid #2563eb;
-      background: #f8fafc;
-      border-radius: 0 5px 5px 0;
-    }
+        .demo-input {
+            padding: 8px 10px;
+            margin-top: 8px;
+            margin-right: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            width: 160px;
+        }
 
-    pre {
-      margin: 12px 0 0;
-      padding: 15px;
-      overflow-x: auto;
-      border-radius: 5px;
-      background: #0f172a;
-      color: #e2e8f0;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-    }
+        .demo-button {
+            padding: 8px 15px;
+            margin-top: 8px;
+            border: 0;
+            border-radius: 5px;
+            background: #2563eb;
+            color: #fff;
+            cursor: pointer;
+        }
 
-    footer {
-      margin-top: 35px;
-      text-align: center;
-      color: #94a3b8;
-      font-size: 13px;
-    }
-  </style>
+        .demo-button:hover {
+            background: #1d4ed8;
+        }
+
+        .demo-result {
+            margin-top: 10px;
+        }
+
+        .demo-close {
+            padding: 6px 12px;
+            margin-top: 8px;
+            margin-left: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            background: #fff;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .demo-close:hover {
+            background: #f1f5f9;
+        }
+
+        footer {
+            margin-top: 35px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
 
-  <h1>Quotes API</h1>
-  <p class="description">REST API untuk mengakses kutipan (quotes) dan penulisnya.</p>
+    <h1>Quran API</h1>
 
-  <div class="section">
-    <h2>1. Random Quote</h2>
-    <span class="url">GET https://quotes-api-991.vercel.app/api/quotes</span>
+    <p class="description">
+        REST API untuk mengakses data Al-Qur'an dan qari.
+    </p>
 
-    <button id="randomBtn">Ambil Random Quote</button>
-    <div id="randomQuote" class="quote" style="display:none"></div>
+    <div class="section">
+        <h2>Endpoints</h2>
 
-    <pre>{
-  "key": "pramoedya_ananta_toer",
-  "quote": "Kemudian malam melanjutkan tugasnya: kosong dari segala perasaan.",
-  "author": "Pramoedya Ananta Toer"
-}</pre>
-  </div>
+        <a class="endpoint" href="/surahs">
+            <span class="method">GET</span>/surahs
+        </a>
 
-  <div class="section">
-    <h2>2. Quote by Key</h2>
-    <span class="url">GET https://quotes-api-991.vercel.app/api/quotes?key=key_quote</span>
+        <a class="endpoint" href="/surahs/1">
+            <span class="method">GET</span>/surahs/{number}
+        </a>
 
-    <div>
-      <input type="text" id="keyInput" placeholder="Masukkan key_quote">
-      <button id="keyBtn">Cari Quote</button>
+        <a class="endpoint" href="/random">
+            <span class="method">GET</span>/random
+        </a>
+
+        <a class="endpoint" href="/qoriahs">
+            <span class="method">GET</span>/qoriahs
+        </a>
     </div>
-    <div id="keyResult"></div>
 
-    <pre>[
-  {
-    "key": "pramoedya_ananta_toer",
-    "quote": "Masa terbaik dalam hidup seseorang adalah masa ia dapat menggunakan kebebasan yang telah direbutnya sendiri.",
-    "author": "Pramoedya Ananta Toer"
-  }
+    <div class="section">
+        <h2>Get All Surahs</h2>
+
+        <p>Mengambil daftar nomor dan nama seluruh surah Al-Qur'an.</p>
+
+        <a class="endpoint" href="/surahs">
+            <span class="method">GET</span>/surahs
+        </a>
+
+        <button class="demo-button" type="button" onclick="demo(this, '/surahs', 'surahsResult')">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'surahsResult')">
+            Tutup
+        </button>
+
+        <div id="surahsResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get Surah</h2>
+
+        <p>Mengambil data surah berdasarkan nomor.</p>
+
+        <a class="endpoint" href="/surahs/1">
+            <span class="method">GET</span>/surahs/{number}
+        </a>
+
+        <input type="number" id="surahNumberInput" class="demo-input" placeholder="Nomor surah (1-114)" min="1" max="114" value="1">
+
+        <button class="demo-button" type="button" onclick="demoSurah(this)">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'surahResult')">
+            Tutup
+        </button>
+
+        <div id="surahResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Random Ayah</h2>
+
+        <p>Mengambil ayat Al-Qur'an secara acak.</p>
+
+        <a class="endpoint" href="/random">
+            <span class="method">GET</span>/random
+        </a>
+
+        <button class="demo-button" type="button" onclick="demo(this, '/random', 'randomResult')">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'randomResult')">
+            Tutup
+        </button>
+
+        <div id="randomResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Qoriah</h2>
+
+        <p>Mengambil daftar qari yang tersedia.</p>
+
+        <a class="endpoint" href="/qoriahs">
+            <span class="method">GET</span>/qoriahs
+        </a>
+
+        <button class="demo-button" type="button" onclick="demo(this, '/qoriahs', 'qoriahResult')">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'qoriahResult')">
+            Tutup
+        </button>
+
+        <div id="qoriahResult" class="demo-result"></div>
+
+        <pre>[
+    {
+        "identifier": "ar.alafasy",
+        "name": "Mishary Rashid Alafasy",
+        "language": "ar"
+    }
 ]</pre>
-  </div>
+    </div>
 
-  <div class="section">
-    <h2>3. List Authors</h2>
-    <span class="url">GET https://quotes-api-991.vercel.app/api/quotes?listAuthors=true</span>
-
-    <button id="authorsBtn">Tampilkan List Author</button>
-    <div id="authorsResult"></div>
-
-    <pre>{
-  "pramoedya_ananta_toer": ["Pramoedya Ananta Toer"],
-  "another_key": ["Author Name"]
-}</pre>
-  </div>
-
-  <footer>Quotes API</footer>
+    <footer>
+        Quran API
+    </footer>
 
 </div>
 
 <script>
-  const API_URL = "https://quotes-api-991.vercel.app/api/quotes";
+async function demoSurah(button) {
+    const number = document.getElementById('surahNumberInput').value;
+    demo(button, '/surahs/' + number, 'surahResult');
+}
 
-  document.getElementById("randomBtn").onclick = async () => {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    const el = document.getElementById("randomQuote");
-    el.style.display = "block";
-    el.innerHTML = `<strong>${data.author}</strong>: ${data.quote}`;
-  };
+async function demo(button, endpoint, resultId) {
+    const result = document.getElementById(resultId);
+    const closeButton = button.nextElementSibling;
 
-  document.getElementById("keyBtn").onclick = async () => {
-    const key = document.getElementById("keyInput").value.trim();
-    if (!key) return alert("Masukkan key_quote!");
-    const res = await fetch(`${API_URL}?key=${encodeURIComponent(key)}`);
-    if (!res.ok) {
-      document.getElementById("keyResult").innerHTML = "Quote tidak ditemukan!";
-      return;
+    result.innerHTML = '<pre>Loading...</pre>';
+
+    try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        result.innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        closeButton.style.display = 'inline-block';
+    } catch (error) {
+        result.innerHTML = `<pre>Error: ${error.message}</pre>`;
     }
-    const data = await res.json();
-    let html = "";
-    data.forEach(q => {
-      html += `<div class="quote"><strong>${q.author}</strong>: ${q.quote}</div>`;
-    });
-    document.getElementById("keyResult").innerHTML = html;
-  };
+}
 
-  document.getElementById("authorsBtn").onclick = async () => {
-    const res = await fetch(`${API_URL}?listAuthors=true`);
-    const data = await res.json();
-    let html = "";
-    for (const key in data) {
-      html += `<div class="quote"><strong>${key}</strong>: ${data[key].join(", ")}</div>`;
-    }
-    document.getElementById("authorsResult").innerHTML = html;
-  };
+function closeDemo(closeButton, resultId) {
+    document.getElementById(resultId).innerHTML = '';
+    closeButton.style.display = 'none';
+}
 </script>
 
 </body>
