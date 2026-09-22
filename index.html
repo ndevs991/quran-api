@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran API</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 36px;
+        }
+
+        .description {
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin: 0 0 15px;
+            font-size: 20px;
+        }
+
+        .endpoint {
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 5px;
+            background: #f1f5f9;
+            color: #0f172a;
+            text-decoration: none;
+            font-family: Consolas, monospace;
+        }
+
+        .endpoint:hover {
+            background: #e2e8f0;
+        }
+
+        .method {
+            color: #16a34a;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        pre {
+            margin: 15px 0 0;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        footer {
+            margin-top: 35px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Quran API</h1>
+
+    <p class="description">
+        REST API untuk mengakses data Al-Qur'an dan qari.
+    </p>
+
+    <div class="section">
+        <h2>Endpoints</h2>
+
+        <a class="endpoint" href="/surahs">
+            <span class="method">GET</span>/surahs
+        </a>
+
+        <a class="endpoint" href="/surahs/1">
+            <span class="method">GET</span>/surahs/{number}
+        </a>
+
+        <a class="endpoint" href="/random">
+            <span class="method">GET</span>/random
+        </a>
+
+        <a class="endpoint" href="/qoriahs">
+            <span class="method">GET</span>/qoriahs
+        </a>
+    </div>
+
+    <div class="section">
+        <h2>Get All Surahs</h2>
+
+        <p>Mengambil seluruh daftar surah Al-Qur'an.</p>
+
+        <a class="endpoint" href="/surahs">
+            <span class="method">GET</span>/surahs
+        </a>
+    </div>
+
+    <div class="section">
+        <h2>Get Surah</h2>
+
+        <p>Mengambil data surah berdasarkan nomor.</p>
+
+        <a class="endpoint" href="/surahs/1">
+            <span class="method">GET</span>/surahs/1
+        </a>
+    </div>
+
+    <div class="section">
+        <h2>Random Ayah</h2>
+
+        <p>Mengambil ayat Al-Qur'an secara acak.</p>
+
+        <a class="endpoint" href="/random">
+            <span class="method">GET</span>/random
+        </a>
+    </div>
+
+    <div class="section">
+        <h2>Qoriah</h2>
+
+        <p>Mengambil daftar qari yang tersedia.</p>
+
+        <a class="endpoint" href="/qoriahs">
+            <span class="method">GET</span>/qoriahs
+        </a>
+
+        <pre>[
+    {
+        "identifier": "ar.alafasy",
+        "name": "Mishary Rashid Alafasy",
+        "language": "ar"
+    }
+]</pre>
+    </div>
+
+    <footer>
+        Quran API
+    </footer>
+
+</div>
+
+</body>
+</html>
