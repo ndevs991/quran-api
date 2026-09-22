@@ -105,6 +105,20 @@
             margin-top: 10px;
         }
 
+        .demo-close {
+            padding: 6px 12px;
+            margin-top: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            background: #fff;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .demo-close:hover {
+            background: #f1f5f9;
+        }
+
         footer {
             margin-top: 35px;
             text-align: center;
@@ -238,10 +252,14 @@ async function demo(endpoint, resultId) {
         const response = await fetch(endpoint);
         const data = await response.json();
 
-        result.innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        result.innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre><button class="demo-close" type="button" onclick="closeDemo('${resultId}')">Tutup</button>`;
     } catch (error) {
         result.innerHTML = `<pre>Error: ${error.message}</pre>`;
     }
+}
+
+function closeDemo(resultId) {
+    document.getElementById(resultId).innerHTML = '';
 }
 </script>
 
