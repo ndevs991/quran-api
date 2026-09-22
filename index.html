@@ -78,6 +78,15 @@
             line-height: 1.5;
         }
 
+        .demo-input {
+            padding: 8px 10px;
+            margin-top: 8px;
+            margin-right: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            width: 160px;
+        }
+
         .demo-button {
             padding: 8px 15px;
             margin-top: 8px;
@@ -156,10 +165,12 @@
         <p>Mengambil data surah berdasarkan nomor.</p>
 
         <a class="endpoint" href="/surahs/1">
-            <span class="method">GET</span>/surahs/1
+            <span class="method">GET</span>/surahs/{number}
         </a>
 
-        <button class="demo-button" type="button" onclick="demo('/surahs/1', 'surahResult')">
+        <input type="number" id="surahNumberInput" class="demo-input" placeholder="Nomor surah (1-114)" min="1" max="114" value="1">
+
+        <button class="demo-button" type="button" onclick="demoSurah()">
             DEMO
         </button>
 
@@ -213,6 +224,11 @@
 </div>
 
 <script>
+async function demoSurah() {
+    const number = document.getElementById('surahNumberInput').value;
+    demo('/surahs/' + number, 'surahResult');
+}
+
 async function demo(endpoint, resultId) {
     const result = document.getElementById(resultId);
 
