@@ -9,6 +9,10 @@
             "destination": "/api/surahs"
         },
         {
+            "source": "/surahs/:number/audio",
+            "destination": "/api/surahs/:number/audio"
+        },        
+        {
             "source": "/surahs/:number",
             "destination": "/api/surahs/:number"
         },
