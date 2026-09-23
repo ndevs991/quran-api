@@ -17,6 +17,10 @@
             "destination": "/api/surahs/:number"
         },
         {
+            "source": "/ayahs/:surah/:ayah",
+            "destination": "/api/ayahs/:surah/:ayah"
+        },        
+        {
             "source": "/qoriahs",
             "destination": "/api/qoriahs"
         },
