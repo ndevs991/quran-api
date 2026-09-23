@@ -35,6 +35,10 @@
         {
             "source": "/juz/:number",
             "destination": "/api/juz/:number"
+        },
+        {
+            "source": "/qoriahs/:identifier/surahs/:number",
+            "destination": "/api/qoriahs/:identifier/surahs/:number"
         }        
     ]
 }
