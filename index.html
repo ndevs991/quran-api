@@ -144,7 +144,7 @@
             https://quran-api-991.vercel.app/
         </a>
     </div>
-    
+
     <div class="section">
         <h2>Endpoints</h2>
 
@@ -156,12 +156,32 @@
             <span class="method">GET</span>/surahs/{number}
         </a>
 
+        <a class="endpoint" href="/surahs/1/audio">
+            <span class="method">GET</span>/surahs/{number}/audio
+        </a>
+
+        <a class="endpoint" href="/ayahs/1/1">
+            <span class="method">GET</span>/ayahs/{surah}/{ayah}
+        </a>
+
+        <a class="endpoint" href="/search?q=">
+            <span class="method">GET</span>/search?q=
+        </a>
+
+        <a class="endpoint" href="/juz/1">
+            <span class="method">GET</span>/juz/{number}
+        </a>
+
         <a class="endpoint" href="/random">
             <span class="method">GET</span>/random
         </a>
 
         <a class="endpoint" href="/qoriahs">
             <span class="method">GET</span>/qoriahs
+        </a>
+
+        <a class="endpoint" href="/qoriahs/ar.alafasy/surahs/1">
+            <span class="method">GET</span>/qoriahs/{identifier}/surahs/{number}
         </a>
     </div>
 
@@ -206,13 +226,105 @@
     </div>
 
     <div class="section">
+        <h2>Surah Audio</h2>
+
+        <p>Mengambil audio full 1 surah berdasarkan qori (default: Alafasy).</p>
+
+        <a class="endpoint" href="/surahs/1/audio">
+            <span class="method">GET</span>/surahs/{number}/audio
+        </a>
+
+        <div>
+            <input type="number" id="surahAudioNumberInput" class="demo-input" placeholder="Nomor surah" min="1" max="114" value="1">
+            <input type="text" id="surahAudioQoriInput" class="demo-input" placeholder="Qori (opsional)">
+        </div>
+
+        <button class="demo-button" type="button" onclick="demoSurahAudio(this)">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'surahAudioResult')">
+            Tutup
+        </button>
+
+        <div id="surahAudioResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get Ayah</h2>
+
+        <p>Mengambil 1 ayat spesifik langsung tanpa mengambil seluruh surah.</p>
+
+        <a class="endpoint" href="/ayahs/1/1">
+            <span class="method">GET</span>/ayahs/{surah}/{ayah}
+        </a>
+
+        <div>
+            <input type="number" id="ayahSurahInput" class="demo-input" placeholder="Nomor surah" min="1" max="114" value="1">
+            <input type="number" id="ayahNumberInput" class="demo-input" placeholder="Nomor ayat" min="1" value="1">
+        </div>
+
+        <button class="demo-button" type="button" onclick="demoAyah(this)">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'ayahResult')">
+            Tutup
+        </button>
+
+        <div id="ayahResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Search</h2>
+
+        <p>Mencari ayat berdasarkan kata kunci (arab atau terjemahan).</p>
+
+        <a class="endpoint" href="/search?q=">
+            <span class="method">GET</span>/search?q=
+        </a>
+
+        <input type="text" id="searchQueryInput" class="demo-input" placeholder="Kata kunci">
+
+        <button class="demo-button" type="button" onclick="demoSearch(this)">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'searchResult')">
+            Tutup
+        </button>
+
+        <div id="searchResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get Juz</h2>
+
+        <p>Mengambil seluruh ayat berdasarkan nomor juz (1-30).</p>
+
+        <a class="endpoint" href="/juz/1">
+            <span class="method">GET</span>/juz/{number}
+        </a>
+
+        <input type="number" id="juzNumberInput" class="demo-input" placeholder="Nomor juz (1-30)" min="1" max="30" value="1">
+
+        <button class="demo-button" type="button" onclick="demoJuz(this)">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'juzResult')">
+            Tutup
+        </button>
+
+        <div id="juzResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
         <h2>Random Ayah</h2>
 
-        <p>Mengambil ayat Al-Qur'an secara acak.</p>
+        <p>Mengambil ayat Al-Qur'an secara acak. Bisa dibatasi ke surah tertentu dengan parameter <code>?surah=</code>.</p>
 
         <a class="endpoint" href="/random">
             <span class="method">GET</span>/random
         </a>
+
+        <input type="number" id="randomSurahInput" class="demo-input" placeholder="Nomor surah (opsional)" min="1" max="114">
 
         <button class="demo-button" type="button" onclick="demoRandom(this)">
             DEMO
@@ -222,6 +334,30 @@
         </button>
 
         <div id="randomResult" class="demo-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Surah Audio by Qori</h2>
+
+        <p>Mengambil audio full 1 surah berdasarkan identifier qori tertentu.</p>
+
+        <a class="endpoint" href="/qoriahs/ar.alafasy/surahs/1">
+            <span class="method">GET</span>/qoriahs/{identifier}/surahs/{number}
+        </a>
+
+        <div>
+            <input type="text" id="qoriIdentifierInput" class="demo-input" placeholder="Identifier qori" value="ar.alafasy">
+            <input type="number" id="qoriSurahNumberInput" class="demo-input" placeholder="Nomor surah" min="1" max="114" value="1">
+        </div>
+
+        <button class="demo-button" type="button" onclick="demoQoriSurah(this)">
+            DEMO
+        </button>
+        <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'qoriSurahResult')">
+            Tutup
+        </button>
+
+        <div id="qoriSurahResult" class="demo-result"></div>
     </div>
 
     <div class="section">
@@ -263,14 +399,45 @@ async function demoSurah(button) {
     demo(button, '/surahs/' + number, 'surahResult');
 }
 
+function demoSurahAudio(button) {
+    const number = document.getElementById('surahAudioNumberInput').value;
+    const qori = document.getElementById('surahAudioQoriInput').value.trim();
+    const url = qori ? `/surahs/${number}/audio?qori=${encodeURIComponent(qori)}` : `/surahs/${number}/audio`;
+    demo(button, url, 'surahAudioResult');
+}
+
+function demoAyah(button) {
+    const surah = document.getElementById('ayahSurahInput').value;
+    const ayah = document.getElementById('ayahNumberInput').value;
+    demo(button, `/ayahs/${surah}/${ayah}`, 'ayahResult');
+}
+
+function demoSearch(button) {
+    const q = document.getElementById('searchQueryInput').value.trim();
+    demo(button, `/search?q=${encodeURIComponent(q)}`, 'searchResult');
+}
+
+function demoJuz(button) {
+    const number = document.getElementById('juzNumberInput').value;
+    demo(button, `/juz/${number}`, 'juzResult');
+}
+
+function demoQoriSurah(button) {
+    const identifier = document.getElementById('qoriIdentifierInput').value.trim();
+    const number = document.getElementById('qoriSurahNumberInput').value;
+    demo(button, `/qoriahs/${identifier}/surahs/${number}`, 'qoriSurahResult');
+}
+
 async function demoRandom(button) {
     const result = document.getElementById('randomResult');
     const closeButton = button.nextElementSibling;
+    const surah = document.getElementById('randomSurahInput').value;
+    const url = surah ? `/random?surah=${surah}` : '/random';
 
     result.innerHTML = '<pre>Loading...</pre>';
 
     try {
-        const response = await fetch('/random');
+        const response = await fetch(url);
         const data = await response.json();
 
         result.innerHTML = `
