@@ -485,13 +485,18 @@
         playBtn.innerHTML = "&#9654;";
     };
 
-    audio.ontimeupdate = () => {
-        if (audio.duration) {
-            seekBar.value = (audio.currentTime / audio.duration) * 100;
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-            durationEl.textContent = formatTime(audio.duration);
-        }
-    };
+   audio.ontimeupdate = () => {
+       if (audio.duration) {
+           seekBar.value = (audio.currentTime / audio.duration) * 100;
+           currentTimeEl.textContent = formatTime(audio.currentTime);
+           durationEl.textContent = formatTime(audio.duration);
+   
+           const inner = document.querySelector(".player-body-inner");
+           const progress = audio.currentTime / audio.duration;
+           const maxScroll = inner.scrollHeight - inner.clientHeight;
+           inner.scrollTop = progress * maxScroll;
+       }
+   };
 
     seekBar.oninput = () => {
         if (audio.duration) {
