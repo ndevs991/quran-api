@@ -196,6 +196,36 @@
         line-height: 1.7;
     }
 
+   .ayah-list {
+       position: relative;
+       z-index: 1;
+       text-align: right;
+       width: 100%;
+   }
+   
+   .ayah-item {
+       padding: 14px 0;
+       border-bottom: 1px solid #1e293b;
+   }
+   
+   .ayah-item:last-child {
+       border-bottom: 0;
+   }
+   
+   .ayah-arab {
+       font-size: 20px;
+       line-height: 2;
+       margin: 0 0 8px;
+   }
+   
+   .ayah-translation {
+       text-align: left;
+       font-size: 13px;
+       color: #94a3b8;
+       line-height: 1.6;
+       margin: 0;
+   }
+
     .player-controls {
         padding: 14px 18px;
         border-top: 1px solid #1e293b;
@@ -384,9 +414,16 @@
             audio.play();
 
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
+            
+            const ayahsHtml = detail.ayahs.map(ayah => `
+                <div class="ayah-item">
+                    <p class="ayah-arab">${ayah.arab} <span style="color:#64748b; font-size:14px;">(${ayah.number.inSurah})</span></p>
+                    <p class="ayah-translation">${ayah.translation}</p>
+                </div>
+            `).join("");
+            
             document.getElementById("playerContent").innerHTML = `
-                <div class="player-icon">🕋</div>
-                <p class="player-description">${detail.description}</p>
+                <div class="ayah-list">${ayahsHtml}</div>
             `;
 
             playBtn.disabled = false;
