@@ -243,10 +243,114 @@
     .ayah-item {
         padding: 14px 0;
         border-bottom: 1px solid #1e293b;
+        position: relative;
     }
 
     .ayah-item:last-child {
         border-bottom: 0;
+    }
+
+    .tafsir-btn {
+        position: absolute;
+        top: 12px;
+        left: 0;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 0;
+        background: #1e293b;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+    }
+
+    .tafsir-btn:hover {
+        background: #263349;
+        color: #e2e8f0;
+    }
+
+    .tafsir-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tafsir-modal-overlay.open {
+        display: flex;
+    }
+
+    .tafsir-modal {
+        background: #111827;
+        border: 1px solid #1e293b;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 480px;
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        text-align: left;
+    }
+
+    .tafsir-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    .tafsir-modal-head h3 {
+        margin: 0;
+        font-size: 15px;
+        color: #e2e8f0;
+    }
+
+    .tafsir-modal-close {
+        border: 0;
+        background: none;
+        color: #94a3b8;
+        font-size: 18px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .tafsir-tabs {
+        display: flex;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    .tafsir-tab {
+        flex: 1;
+        padding: 10px;
+        border: 0;
+        background: none;
+        color: #94a3b8;
+        font-size: 12px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+    }
+
+    .tafsir-tab.active {
+        color: #7dd3fc;
+        border-bottom-color: #2563eb;
+    }
+
+    .tafsir-body {
+        padding: 16px;
+        overflow-y: auto;
+        font-size: 13px;
+        line-height: 1.7;
+        color: #cbd5e1;
     }
 
     .ayah-arab {
@@ -371,6 +475,21 @@
 
 </div>
 
+<div class="tafsir-modal-overlay" id="tafsirOverlay" onclick="if(event.target===this) closeTafsir()">
+    <div class="tafsir-modal">
+        <div class="tafsir-modal-head">
+            <h3 id="tafsirTitle">Tafsir</h3>
+            <button class="tafsir-modal-close" onclick="closeTafsir()">&times;</button>
+        </div>
+        <div class="tafsir-tabs">
+            <button class="tafsir-tab active" data-source="kemenag" onclick="switchTafsirTab('kemenag')">Kemenag</button>
+            <button class="tafsir-tab" data-source="quraish" onclick="switchTafsirTab('quraish')">Quraish Shihab</button>
+            <button class="tafsir-tab" data-source="jalalayn" onclick="switchTafsirTab('jalalayn')">Jalalayn</button>
+        </div>
+        <div class="tafsir-body" id="tafsirBody"></div>
+    </div>
+</div>
+
 <audio id="audioPlayer"></audio>
 
 <script>
@@ -393,6 +512,45 @@
     let activeBtn = null;
     let autoScrollEnabled = true;
     let isProgrammaticScroll = false;
+    let currentAyahs = [];
+    let activeTafsirIndex = null;
+    let activeTafsirSource = "kemenag";
+
+    const tafsirOverlay = document.getElementById("tafsirOverlay");
+    const tafsirTitle = document.getElementById("tafsirTitle");
+    const tafsirBody = document.getElementById("tafsirBody");
+
+    function getTafsirText(ayah, source) {
+        const t = ayah.tafsir[source];
+        if (!t) return "Tafsir tidak tersedia.";
+        return typeof t === "string" ? t : (t.long || t.short || "Tafsir tidak tersedia.");
+    }
+
+    function renderTafsirBody() {
+        const ayah = currentAyahs[activeTafsirIndex];
+        tafsirTitle.textContent = `Tafsir Ayat ${ayah.number.inSurah}`;
+        tafsirBody.textContent = getTafsirText(ayah, activeTafsirSource);
+
+        document.querySelectorAll(".tafsir-tab").forEach(tab => {
+            tab.classList.toggle("active", tab.dataset.source === activeTafsirSource);
+        });
+    }
+
+    function openTafsir(idx) {
+        activeTafsirIndex = idx;
+        activeTafsirSource = "kemenag";
+        renderTafsirBody();
+        tafsirOverlay.classList.add("open");
+    }
+
+    function closeTafsir() {
+        tafsirOverlay.classList.remove("open");
+    }
+
+    function switchTafsirTab(source) {
+        activeTafsirSource = source;
+        renderTafsirBody();
+    }
 
     function formatTime(sec) {
         if (!isFinite(sec)) return "0:00";
@@ -484,8 +642,11 @@
 
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
 
-            const ayahsHtml = detail.ayahs.map(ayah => `
+            currentAyahs = detail.ayahs;
+
+            const ayahsHtml = detail.ayahs.map((ayah, idx) => `
                 <div class="ayah-item">
+                    <button class="tafsir-btn" onclick="openTafsir(${idx})">&#8942;</button>
                     <p class="ayah-arab">${ayah.arab} <span style="color:#64748b; font-size:14px;">(${ayah.number.inSurah})</span></p>
                     <p class="ayah-translation">${ayah.translation}</p>
                 </div>
