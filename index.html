@@ -403,7 +403,7 @@ function demoSurahAudio(button) {
     const number = document.getElementById('surahAudioNumberInput').value;
     const qori = document.getElementById('surahAudioQoriInput').value.trim();
     const url = qori ? `/surahs/${number}/audio?qori=${encodeURIComponent(qori)}` : `/surahs/${number}/audio`;
-    demo(button, url, 'surahAudioResult');
+    demoWithAudio(button, url, 'surahAudioResult');
 }
 
 function demoAyah(button) {
@@ -425,19 +425,23 @@ function demoJuz(button) {
 function demoQoriSurah(button) {
     const identifier = document.getElementById('qoriIdentifierInput').value.trim();
     const number = document.getElementById('qoriSurahNumberInput').value;
-    demo(button, `/qoriahs/${identifier}/surahs/${number}`, 'qoriSurahResult');
+    demoWithAudio(button, `/qoriahs/${identifier}/surahs/${number}`, 'qoriSurahResult');
 }
 
 async function demoRandom(button) {
-    const result = document.getElementById('randomResult');
-    const closeButton = button.nextElementSibling;
     const surah = document.getElementById('randomSurahInput').value;
     const url = surah ? `/random?surah=${surah}` : '/random';
+    demoWithAudio(button, url, 'randomResult');
+}
+
+async function demoWithAudio(button, endpoint, resultId) {
+    const result = document.getElementById(resultId);
+    const closeButton = button.nextElementSibling;
 
     result.innerHTML = '<pre>Loading...</pre>';
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(endpoint);
         const data = await response.json();
 
         result.innerHTML = `
