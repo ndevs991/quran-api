@@ -39,6 +39,10 @@
         {
             "source": "/qoriahs/:identifier/surahs/:number",
             "destination": "/api/qoriahs/:identifier/surahs/:number"
+        },
+        {
+            "source": "/murottal",
+            "destination": "/murottal.html"
         }        
     ]
 }
