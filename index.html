@@ -214,7 +214,7 @@
             <span class="method">GET</span>/random
         </a>
 
-        <button class="demo-button" type="button" onclick="demo(this, '/random', 'randomResult')">
+        <button class="demo-button" type="button" onclick="demoRandom(this)">
             DEMO
         </button>
         <button class="demo-close" type="button" style="display:none" onclick="closeDemo(this, 'randomResult')">
@@ -261,6 +261,26 @@
 async function demoSurah(button) {
     const number = document.getElementById('surahNumberInput').value;
     demo(button, '/surahs/' + number, 'surahResult');
+}
+
+async function demoRandom(button) {
+    const result = document.getElementById('randomResult');
+    const closeButton = button.nextElementSibling;
+
+    result.innerHTML = '<pre>Loading...</pre>';
+
+    try {
+        const response = await fetch('/random');
+        const data = await response.json();
+
+        result.innerHTML = `
+            <pre>${JSON.stringify(data, null, 4)}</pre>
+            <audio controls src="${data.audio}" style="width:100%; margin-top:10px;"></audio>
+        `;
+        closeButton.style.display = 'inline-block';
+    } catch (error) {
+        result.innerHTML = `<pre>Error: ${error.message}</pre>`;
+    }
 }
 
 async function demo(button, endpoint, resultId) {
