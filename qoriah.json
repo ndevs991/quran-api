@@ -33,5 +33,15 @@
     "identifier": "ar.saudalshuraim",
     "name": "Saud asy-Syuraim",
     "language": "ar"
-  }
+  },
+  {
+    "identifier": "ar.yasseraldossari",
+    "name": "Yasser Al-Dossari",
+    "language": "ar"
+  },
+  {
+    "identifier": "ar.abdullahawadaljuhani",
+    "name": "Abdullah Al-Juhany",
+    "language": "ar"
+  }  
 ]
