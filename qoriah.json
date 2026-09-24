@@ -73,5 +73,11 @@
     "identifier": "ar.shaatree",
     "name": "Abu Bakr Al-Shatri",
     "language": "ar"
-  }
+  },
+  // custom qoriah with custom audio source
+  {
+    "identifier": "muhammad.thahaaljunaid",
+    "name": "Muhammad Thaha Al-Junaid",
+    "language": "ar"
+  }  
 ]
