@@ -649,10 +649,10 @@
 
             currentAyahs = detail.ayahs;
 
+            //<p class="ayah-arab">${ayah.arab} <span style="color:#64748b; font-size:14px;">(${ayah.number.inSurah})</span></p>			
             const ayahsHtml = detail.ayahs.map((ayah, idx) => `
                 <div class="ayah-item">
                     <button class="tafsir-btn" onclick="openTafsir(${idx})">&#8942;</button>
-                    //<p class="ayah-arab">${ayah.arab} <span style="color:#64748b; font-size:14px;">(${ayah.number.inSurah})</span></p>
 					<p class="ayah-arab">${ayah.arab} <span style="color:#64748b; font-size:14px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
                     <p class="ayah-translation">${ayah.translation}</p>
                 </div>
