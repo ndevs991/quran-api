@@ -699,7 +699,7 @@
             currentTimeEl.textContent = formatTime(audio.currentTime);
             durationEl.textContent = formatTime(audio.duration);
 
-            const startOffset = 15;
+            const startOffset = 10;
             if (autoScrollEnabled && audio.currentTime >= startOffset) {
                 const inner = document.querySelector(".player-body-inner");
                 const progress = (audio.currentTime - startOffset) / (audio.duration - startOffset);
