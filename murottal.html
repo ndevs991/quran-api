@@ -451,6 +451,55 @@
         background: #2b3648;
         border-radius: 3px;
     }
+
+    @media (max-width: 768px) {
+        body {
+            height: auto;
+            min-height: 100vh;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+    
+        .wrapper {
+            flex-direction: column;
+            height: auto;
+            max-width: 100%;
+            padding: 0 16px;
+        }
+    
+        .panel {
+            width: 100%;
+        }
+    
+        .surah-list {
+            max-height: 260px;
+        }
+    
+        .player-body {
+            min-height: 300px;
+        }
+    
+        .player-body-inner {
+            position: static;
+            height: auto;
+            max-height: 300px;
+        }
+    }
+    
+    @media (max-width: 420px) {
+        .surah-list {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    
+        .player-controls {
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+    
+        .volume {
+            width: 50px;
+        }
+    }
 </style>
 </head>
 <body>
