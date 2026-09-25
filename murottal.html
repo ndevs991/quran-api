@@ -498,20 +498,38 @@
         
         .player-controls {
             flex-wrap: wrap;
-            row-gap: 8px;
+            row-gap: 10px;
         }
     
         .seek {
-            order: -1;
+            order: -3;
             flex-basis: 100%;
         }
     
-        .volume {
-            width: 50px;
+        #currentTime {
+            order: -2;
+            flex: 1;
+            text-align: left;
         }
     
-        .time {
-            font-size: 11px;
+        #duration {
+            order: -1;
+            flex: 1;
+            text-align: right;
+        }
+    
+        .play-btn {
+            order: 0;
+        }
+    
+        #volumeIcon {
+            order: 1;
+            margin-left: auto;
+        }
+    
+        .volume {
+            order: 2;
+            width: 60px;
         }
     }
     
