@@ -29,6 +29,7 @@
         align-items: center;
         height: 100vh;
         width: 100vw;
+        min-width: 320px;
         overflow: hidden;
         overflow-y: scroll;
     }
@@ -496,56 +497,48 @@
         .footer-box button {
             width: 100%;
         }
-        
-        .player-controls {
-            flex-wrap: wrap;
-            row-gap: 10px;
-        }
     
-        .seek {
-            order: -3;
-            flex-basis: 100%;
+        .player-controls {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            grid-template-areas:
+                "time1 seek time2"
+                "play  icon vol";
+            row-gap: 10px;
+            column-gap: 8px;
+            align-items: center;
         }
     
         #currentTime {
-            order: -2;
-            flex: 1;
-            text-align: left;
+            grid-area: time1;
+        }
+    
+        .seek {
+            grid-area: seek;
+            width: 100%;
         }
     
         #duration {
-            order: -1;
-            flex: 1;
-            text-align: right;
+            grid-area: time2;
         }
     
         .play-btn {
-            order: 0;
+            grid-area: play;
         }
     
         #volumeIcon {
-            order: 1;
-            margin-left: auto;
+            grid-area: icon;
         }
     
         .volume {
-            order: 2;
-            width: 60px;
+            grid-area: vol;
+            width: 100%;
         }
     }
     
     @media (max-width: 420px) {
         .surah-list {
             grid-template-columns: repeat(2, 1fr);
-        }
-    
-        .player-controls {
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-    
-        .volume {
-            width: 50px;
         }
     }
 </style>
