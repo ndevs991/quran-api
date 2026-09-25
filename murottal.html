@@ -405,7 +405,7 @@
         border-top: 1px solid #1e293b;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
 
     .play-btn {
@@ -427,17 +427,22 @@
 
     .seek {
         flex: 1;
+        min-width: 30px;
         accent-color: #2563eb;
     }
 
     .time {
-        font-size: 12px;
-        color: #94a3b8;
-        white-space: nowrap;
+        font-size: 11px;
+        flex-shrink: 0;
     }
 
+    #volumeIcon {
+    	cursor: pointer;
+    }
+    
     .volume {
-        width: 70px;
+        width: 50px;
+        flex-shrink: 0;
         accent-color: #2563eb;
     }
 
@@ -495,43 +500,6 @@
     
         .footer-box select,
         .footer-box button {
-            width: 100%;
-        }
-    
-        .player-controls {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            grid-template-areas:
-                "time1 seek time2"
-                "play  icon vol";
-            row-gap: 10px;
-            column-gap: 8px;
-            align-items: center;
-        }
-    
-        #currentTime {
-            grid-area: time1;
-        }
-    
-        .seek {
-            grid-area: seek;
-            width: 100%;
-        }
-    
-        #duration {
-            grid-area: time2;
-        }
-    
-        .play-btn {
-            grid-area: play;
-        }
-    
-        #volumeIcon {
-            grid-area: icon;
-        }
-    
-        .volume {
-            grid-area: vol;
             width: 100%;
         }
     }
