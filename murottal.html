@@ -164,11 +164,41 @@
         position: relative;
     }
 
-    .autoscroll-btn {
+    .scroll-controls {
         position: absolute;
         right: 16px;
         top: 50%;
         transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .speed-btn {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 0;
+        background: #1e293b;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 13px;
+        line-height: 1;
+    }
+
+    .speed-btn:hover {
+        background: #263349;
+        color: #e2e8f0;
+    }
+
+    .speed-label {
+        font-size: 11px;
+        color: #64748b;
+        width: 32px;
+        text-align: center;
+    }
+
+    .autoscroll-btn {
         padding: 5px 12px;
         font-size: 11px;
         font-weight: normal;
@@ -450,9 +480,14 @@
     <div class="panel panel-player">
         <div class="player-head">
             <span id="playerTitle">🕋</span>
-            <button id="autoScrollBtn" class="autoscroll-btn" style="display:none" onclick="enableAutoScroll()">
-                Auto-Scroll
-            </button>
+            <div class="scroll-controls">
+                <button class="speed-btn" onclick="adjustScrollSpeed(-0.1)">−</button>
+                <span class="speed-label" id="speedLabel">1.0x</span>
+                <button class="speed-btn" onclick="adjustScrollSpeed(0.1)">+</button>
+                <button id="autoScrollBtn" class="autoscroll-btn" style="display:none" onclick="enableAutoScroll()">
+                    Auto-Scroll
+                </button>
+            </div>
         </div>
 
         <div class="player-body">
@@ -508,11 +543,13 @@
     const volumeIcon = document.getElementById("volumeIcon");
     const autoScrollBtn = document.getElementById("autoScrollBtn");
     const playerBodyInner = document.querySelector(".player-body-inner");
+    const speedLabel = document.getElementById("speedLabel");
 
     let surahs = [];
     let activeBtn = null;
     let autoScrollEnabled = true;
     let isProgrammaticScroll = false;
+    let autoScrollSpeed = 1;
     let currentAyahs = [];
     let activeTafsirIndex = null;
     let activeTafsirSource = "kemenag";
@@ -569,6 +606,11 @@
         autoScrollBtn.style.display = "none";
     }
 
+    function adjustScrollSpeed(delta) {
+        autoScrollSpeed = Math.min(3, Math.max(0.2, +(autoScrollSpeed + delta).toFixed(1)));
+        speedLabel.textContent = autoScrollSpeed.toFixed(1) + "x";
+    }
+
     playerBodyInner.addEventListener("scroll", () => {
         if (isProgrammaticScroll) {
             isProgrammaticScroll = false;
@@ -608,10 +650,10 @@
         });
         qoriSelect.value = getSelectedQori();
     }
-	
-	function toArabicNumber(number) {
-		return String(number).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
-	}
+
+    function toArabicNumber(number) {
+        return String(number).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+    }
 
     async function playSurahByNumber(number) {
         const surah = surahs.find(s => s.number === number);
@@ -649,11 +691,10 @@
 
             currentAyahs = detail.ayahs;
 
-            //<p class="ayah-arab">${ayah.arab} <span style="color:#64748b; font-size:14px;">(${ayah.number.inSurah})</span></p>			
             const ayahsHtml = detail.ayahs.map((ayah, idx) => `
                 <div class="ayah-item">
                     <button class="tafsir-btn" onclick="openTafsir(${idx})">&#8942;</button>
-					<p class="ayah-arab">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
+                    <p class="ayah-arab">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
                     <p class="ayah-translation">${ayah.translation}</p>
                 </div>
             `).join("");
@@ -703,9 +744,10 @@
             if (autoScrollEnabled && audio.currentTime >= startOffset) {
                 const inner = document.querySelector(".player-body-inner");
                 const progress = (audio.currentTime - startOffset) / (audio.duration - startOffset);
+                const adjustedProgress = Math.min(1, Math.max(0, progress * autoScrollSpeed));
                 const maxScroll = inner.scrollHeight - inner.clientHeight;
                 isProgrammaticScroll = true;
-                inner.scrollTop = progress * maxScroll;
+                inner.scrollTop = adjustedProgress * maxScroll;
             }
         }
     };
