@@ -402,8 +402,21 @@
         padding: 14px 18px;
         border-top: 1px solid #1e293b;
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: 10px;
+    }
+    
+    .controls-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    
+    .volume-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .play-btn {
@@ -592,12 +605,18 @@
         </div>
 
         <div class="player-controls">
-            <button class="play-btn" id="playBtn" disabled>&#9654;</button>
-            <span class="time" id="currentTime">0:00</span>
-            <input type="range" class="seek" id="seekBar" value="0" min="0" max="100" step="1" disabled>
-            <span class="time" id="duration">0:00</span>
-            <span id="volumeIcon">&#128266;</span>
-            <input type="range" class="volume" id="volumeBar" value="100" min="0" max="100" step="1">
+            <div class="controls-row">
+                <span class="time" id="currentTime">0:00</span>
+                <input type="range" class="seek" id="seekBar" value="0" min="0" max="100" step="1" disabled>
+                <span class="time" id="duration">0:00</span>
+            </div>
+            <div class="controls-row">
+                <button class="play-btn" id="playBtn" disabled>&#9654;</button>
+                <div class="volume-group">
+                    <span id="volumeIcon">&#128266;</span>
+                    <input type="range" class="volume" id="volumeBar" value="100" min="0" max="100" step="1">
+                </div>
+            </div>
         </div>
     </div>
 
