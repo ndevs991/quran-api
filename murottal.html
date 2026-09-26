@@ -184,6 +184,16 @@
         gap: 6px;
     }
 
+    .jump-select {
+        padding: 4px 6px;
+        font-size: 11px;
+        background: #1e293b;
+        color: #94a3b8;
+        border: 1px solid #2b3648;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
     .speed-btn {
         width: 22px;
         height: 22px;
@@ -610,6 +620,9 @@
         <div class="player-head">
             <span id="playerTitle">🕋</span>
             <div class="scroll-controls">
+                <select id="jumpAyahSelect" class="jump-select" onchange="jumpToAyah(this.value)">
+                    <option value="">Ayat</option>
+                </select>              
                 <button class="speed-btn" onclick="adjustScrollSpeed(-0.1)">−</button>
                 <span class="speed-label" id="speedLabel">1.0x</span>
                 <button class="speed-btn" onclick="adjustScrollSpeed(0.1)">+</button>
@@ -828,6 +841,31 @@
         autoScrollSpeed = Math.min(3, Math.max(0.2, +(autoScrollSpeed + delta).toFixed(1)));
         speedLabel.textContent = autoScrollSpeed.toFixed(1) + "x";
     }
+    
+    function populateJumpAyahSelect() {
+        const select = document.getElementById("jumpAyahSelect");
+        select.innerHTML = '<option value="">Ayat</option>';
+        currentAyahs.forEach(ayah => {
+            const opt = document.createElement("option");
+            opt.value = ayah.number.inSurah;
+            opt.textContent = `Ayat ${ayah.number.inSurah}`;
+            select.appendChild(opt);
+        });
+    }
+    
+    function jumpToAyah(ayahNumber) {
+        if (!ayahNumber) return;
+        const target = document.querySelector(`.ayah-item[data-ayah="${ayahNumber}"]`);
+        if (target) {
+            autoScrollEnabled = false;
+            autoScrollBtn.style.display = "inline-block";
+            target.scrollIntoView({ block: "center" });
+            target.style.transition = "background 0.4s";
+            target.style.background = "rgba(37,99,235,0.15)";
+            setTimeout(() => target.style.background = "", 2000);
+        }
+        document.getElementById("jumpAyahSelect").value = "";
+    }  
 
     playerBodyInner.addEventListener("scroll", () => {
         if (isProgrammaticScroll) {
@@ -910,6 +948,8 @@
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
 
             currentAyahs = detail.ayahs;
+
+            populateJumpAyahSelect();
 
             const ayahsHtml = detail.ayahs.map((ayah, idx) => `
                 <div class="ayah-item" data-ayah="${ayah.number.inSurah}">
