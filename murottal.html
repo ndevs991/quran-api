@@ -644,19 +644,19 @@
 <div class="wrapper">
 
     <div class="panel panel-list">
-      <div class="search-box">
-          <input type="text" id="searchInput" placeholder="Cari nama surat ...">
-          <button class="settings-btn" onclick="toggleSettingsPopover(event)">⚙️</button>
-      </div>
-      
-      <div class="settings-popover" id="settingsPopover">
-          <div class="font-size-control">
-              <span>Ukuran Arab</span>
-              <button class="speed-btn" onclick="adjustArabicFontSize(-1)">A−</button>
-              <span class="speed-label" id="fontSizeLabel">Normal</span>
-              <button class="speed-btn" onclick="adjustArabicFontSize(1)">A+</button>
-          </div>
-      </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari nama surat ...">
+            <button class="settings-btn" onclick="toggleSettingsPopover(event)">⚙️</button>
+        
+            <div class="settings-popover" id="settingsPopover">
+                <div class="font-size-control">
+                    <span>Ukuran Arab</span>
+                    <button class="speed-btn" onclick="adjustArabicFontSize(-1)">A−</button>
+                    <span class="speed-label" id="fontSizeLabel">Normal</span>
+                    <button class="speed-btn" onclick="adjustArabicFontSize(1)">A+</button>
+                </div>
+            </div>
+        </div>
 
         <div class="surah-list" id="surahList"></div>
 
