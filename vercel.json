@@ -41,6 +41,10 @@
             "destination": "/api/qoriahs/:identifier/surahs/:number"
         },
         {
+            "source": "/ayahs/:surah/:ayah/audio",
+            "destination": "/api/ayahs/:surah/:ayah/audio"
+        },        
+        {
             "source": "/murottal",
             "destination": "/murottal.html"
         }        
