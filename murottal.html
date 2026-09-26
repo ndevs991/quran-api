@@ -810,7 +810,7 @@
                         const target = document.querySelector(`.ayah-item[data-ayah="${ayahParam}"]`);
                         if (target) {
                             autoScrollEnabled = false;
-                            target.scrollIntoView({ block: "start" });
+                            target.scrollIntoView({ block: "nearest" });
                             target.style.transition = "background 0.4s";
                             target.style.background = "rgba(37,99,235,0.15)";
                             setTimeout(() => target.style.background = "", 2000);
@@ -859,7 +859,7 @@
         if (target) {
             autoScrollEnabled = false;
             autoScrollBtn.style.display = "inline-block";
-            target.scrollIntoView({ block: "start" });
+            target.scrollIntoView({ block: "nearest" });
             target.style.transition = "background 0.4s";
             target.style.background = "rgba(37,99,235,0.15)";
             setTimeout(() => target.style.background = "", 2000);
