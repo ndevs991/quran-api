@@ -1,7 +1,16 @@
 import quran from "../../../../quran.json";
 import qoriahs from "../../../../qoriah.json";
 
-export default function handler(req, res) {
+async function isAudioAvailable(url) {
+    try {
+        const res = await fetch(url, { method: "HEAD" });
+        return res.ok;
+    } catch {
+        return false;
+    }
+}
+
+export default async function handler(req, res) {
     const surahNumber = Number(req.query.surah);
     const ayahNumber = Number(req.query.ayah);
     const qori = req.query.qori || "ar.alafasy";
@@ -37,13 +46,24 @@ export default function handler(req, res) {
         });
     }
 
+    let finalQori = qori;
+    let audioUrl = `https://cdn.islamic.network/quran/audio/128/${qori}/${ayah.number.inQuran}.mp3`;
+
+    if (!(await isAudioAvailable(audioUrl))) {
+        finalQori = "ar.alafasy";
+        audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number.inQuran}.mp3`;
+    }
+
+    const finalQoriData = qoriahs.find(q => q.identifier === finalQori);
+
     res.status(200).json({
         surah: {
             number: surah.number,
             name: surah.name
         },
         ayah: ayahNumber,
-        qori: validQori.name,
-        audio: `https://cdn.islamic.network/quran/audio/128/${qori}/${ayah.number.inQuran}.mp3`
+        qori: finalQoriData.name,
+        fallback: finalQori !== qori,
+        audio: audioUrl
     });
 }
