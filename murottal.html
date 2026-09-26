@@ -877,6 +877,8 @@
         const surah = surahs.find(s => s.number === number);
         if (!surah) return;
 
+        ayahAudio.pause();
+
         autoScrollEnabled = true;
         autoScrollBtn.style.display = "none";
 
