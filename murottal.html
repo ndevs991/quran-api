@@ -654,6 +654,7 @@
 </div>
 
 <audio id="audioPlayer"></audio>
+<audio id="ayahAudioPlayer"></audio>  
 
 <script>
     const API_BASE = "";
@@ -751,6 +752,26 @@
         const text = `${ayah.arab}\n\n${ayah.translation}`;
         navigator.clipboard.writeText(text).then(() => showToast("Teks ayat disalin!"));
     }
+    
+    const ayahAudio = document.getElementById("ayahAudioPlayer");
+    const AYAH_AUDIO_KEYS = ["alafasy", "ahmedajamy", "husarymujawwad", "minshawi", "muhammadayyoub", "muhammadjibreel"];
+    
+    function playAyah(idx) {
+        const ayah = currentAyahs[idx];
+        const qori = getSelectedQori().replace("ar.", "");
+        const key = AYAH_AUDIO_KEYS.includes(qori) ? qori : "alafasy";
+        const url = ayah.audio[key];
+    
+        if (!url) {
+            showToast("Audio ayat tidak tersedia.");
+            return;
+        }
+    
+        audio.pause();
+        ayahAudio.src = url;
+        ayahAudio.play();
+        showToast(`Memutar ayat ${ayah.number.inSurah} ...`);
+    }  
     
     function shareAyah(ayahNumber) {
         const surahNumber = Number(audio.dataset.currentNumber);
@@ -891,7 +912,8 @@
                     <div class="ayah-menu">
                         <button class="tafsir-btn" onclick="toggleAyahMenu(event, ${idx})">&#8942;</button>
                         <div class="ayah-dropdown" id="ayahDropdown-${idx}">
-                            <button onclick="openTafsir(${idx}); closeAllAyahMenus()">📖 Tafsir</button>
+                            <button onclick="playAyah(${idx}); closeAllAyahMenus()">▶️ Putar Ayat</button>
+                            <button onclick="openTafsir(${idx}); closeAllAyahMenus()">📖 Lihat Tafsir</button>
                             <button onclick="copyAyah(${idx}); closeAllAyahMenus()">📋 Copy</button>
                             <button onclick="shareAyah(${ayah.number.inSurah}); closeAllAyahMenus()">🔗 Bagikan</button>
                         </div>
