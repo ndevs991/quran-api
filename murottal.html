@@ -179,7 +179,7 @@
     }
 
     .scroll-controls {
-        display: flex;
+        display: none;
         align-items: center;
         gap: 6px;
     }
@@ -946,6 +946,7 @@
             audio.play();
 
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
+            document.querySelector(".scroll-controls").style.display = "flex";
 
             currentAyahs = detail.ayahs;
 
