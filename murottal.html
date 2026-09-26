@@ -9,13 +9,13 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9PG1DCJC55"></script>
 <script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-gtag('config', 'G-9PG1DCJC55');
-</script>
-
+  gtag('config', 'G-9PG1DCJC55');
+</script>    
+    
 <style>
     @font-face {
         font-family: 'Amiri';
@@ -129,15 +129,6 @@ gtag('config', 'G-9PG1DCJC55');
     .footer-box {
         padding: 14px;
         border-top: 1px solid #1e293b;
-    }
-
-    .font-size-control {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: #94a3b8;
-        margin-bottom: 10px;
     }
 
     .footer-box .input-group {
@@ -293,23 +284,16 @@ gtag('config', 'G-9PG1DCJC55');
         padding: 14px 0;
         border-bottom: 1px solid #1e293b;
         position: relative;
-        transition: background 0.4s;
     }
 
     .ayah-item:last-child {
         border-bottom: 0;
     }
 
-    .ayah-toolbar {
+    .tafsir-btn {
         position: absolute;
         top: 12px;
         left: 0;
-        display: flex;
-        gap: 6px;
-        z-index: 2;
-    }
-
-    .ayah-toolbar button {
         width: 24px;
         height: 24px;
         border-radius: 50%;
@@ -317,14 +301,15 @@ gtag('config', 'G-9PG1DCJC55');
         background: #1e293b;
         color: #94a3b8;
         cursor: pointer;
-        font-size: 12px;
+        font-size: 14px;
         line-height: 1;
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 2;
     }
 
-    .ayah-toolbar button:hover {
+    .tafsir-btn:hover {
         background: #263349;
         color: #e2e8f0;
     }
@@ -410,14 +395,13 @@ gtag('config', 'G-9PG1DCJC55');
     }
 
     .ayah-arab {
-        font-size: var(--arabic-font-size, 21px);
+        font-size: 21px;
         line-height: 2;
         margin: 0 0 10px 24px;
         font-family: "Amiri","Traditional Arabic",Tahoma,sans-serif;
         font-weight: normal;
         text-align: right;
         direction: rtl;
-        cursor: pointer;
     }
 
     .ayah-translation {
@@ -465,9 +449,9 @@ gtag('config', 'G-9PG1DCJC55');
     }
 
     #volumeIcon {
-        cursor: pointer;
+    	cursor: pointer;
     }
-
+    
     .volume {
         width: 50px;
         flex-shrink: 0;
@@ -487,27 +471,6 @@ gtag('config', 'G-9PG1DCJC55');
         border-radius: 3px;
     }
 
-    .toast {
-        position: fixed;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%) translateY(20px);
-        background: #1e293b;
-        color: #e2e8f0;
-        padding: 10px 18px;
-        border-radius: 6px;
-        font-size: 13px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s, transform 0.2s;
-        z-index: 200;
-    }
-
-    .toast.show {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-
     @media (max-width: 768px) {
         body {
             height: auto;
@@ -515,26 +478,26 @@ gtag('config', 'G-9PG1DCJC55');
             overflow-y: auto;
             padding: 16px 0;
         }
-
+    
         .wrapper {
             flex-direction: column;
             height: auto;
             max-width: 100%;
             padding: 0 16px;
         }
-
+    
         .panel {
             width: 100%;
         }
-
+    
         .surah-list {
             max-height: 260px;
         }
-
+    
         .player-body {
             min-height: 300px;
         }
-
+    
         .player-body-inner {
             position: static;
             height: auto;
@@ -546,13 +509,13 @@ gtag('config', 'G-9PG1DCJC55');
         .footer-box .input-group {
             flex-direction: column;
         }
-
+    
         .footer-box select,
         .footer-box button {
             width: 100%;
         }
     }
-
+    
     @media (max-width: 420px) {
         .surah-list {
             grid-template-columns: repeat(2, 1fr);
@@ -572,12 +535,6 @@ gtag('config', 'G-9PG1DCJC55');
         <div class="surah-list" id="surahList"></div>
 
         <div class="footer-box">
-            <div class="font-size-control">
-                <span>Ukuran Arab</span>
-                <button class="speed-btn" onclick="adjustArabicFontSize(-1)">A−</button>
-                <span class="speed-label" id="fontSizeLabel">21px</span>
-                <button class="speed-btn" onclick="adjustArabicFontSize(1)">A+</button>
-            </div>
             <div class="input-group">
                 <select id="qoriSelect"></select>
                 <button id="saveQori">Simpan</button>
@@ -635,8 +592,6 @@ gtag('config', 'G-9PG1DCJC55');
     </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <audio id="audioPlayer"></audio>
 
 <script>
@@ -668,43 +623,6 @@ gtag('config', 'G-9PG1DCJC55');
     const tafsirOverlay = document.getElementById("tafsirOverlay");
     const tafsirTitle = document.getElementById("tafsirTitle");
     const tafsirBody = document.getElementById("tafsirBody");
-
-    let arabicFontSize = parseInt(localStorage.getItem("arabicFontSize")) || 21;
-    document.documentElement.style.setProperty("--arabic-font-size", arabicFontSize + "px");
-    document.getElementById("fontSizeLabel").textContent = arabicFontSize + "px";
-
-    function adjustArabicFontSize(delta) {
-        arabicFontSize = Math.min(36, Math.max(14, arabicFontSize + delta));
-        document.documentElement.style.setProperty("--arabic-font-size", arabicFontSize + "px");
-        document.getElementById("fontSizeLabel").textContent = arabicFontSize + "px";
-        localStorage.setItem("arabicFontSize", arabicFontSize);
-    }
-
-    let toastTimeout;
-    function showToast(message) {
-        const toast = document.getElementById("toast");
-        toast.textContent = message;
-        toast.classList.add("show");
-        clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => toast.classList.remove("show"), 1800);
-    }
-
-    function shareAyah(ayahNumber) {
-        const surahNumber = Number(audio.dataset.currentNumber);
-        const url = `${location.origin}${location.pathname}?surah=${surahNumber}&ayah=${ayahNumber}`;
-
-        if (navigator.share) {
-            navigator.share({ url }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(url).then(() => showToast("Link ayat disalin!"));
-        }
-    }
-
-    function copyAyah(idx) {
-        const ayah = currentAyahs[idx];
-        const text = `${ayah.arab}\n\n${ayah.translation}`;
-        navigator.clipboard.writeText(text).then(() => showToast("Teks ayat disalin!"));
-    }
 
     function getTafsirText(ayah, source) {
         const t = ayah.tafsir[source];
@@ -840,12 +758,9 @@ gtag('config', 'G-9PG1DCJC55');
             currentAyahs = detail.ayahs;
 
             const ayahsHtml = detail.ayahs.map((ayah, idx) => `
-                <div class="ayah-item" data-ayah="${ayah.number.inSurah}">
-                    <div class="ayah-toolbar">
-                        <button onclick="shareAyah(${ayah.number.inSurah})" title="Bagikan">&#128279;</button>
-                        <button onclick="copyAyah(${idx})" title="Salin">&#128203;</button>
-                    </div>
-                    <p class="ayah-arab" onclick="openTafsir(${idx})">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
+                <div class="ayah-item">
+                    <button class="tafsir-btn" onclick="openTafsir(${idx})">&#8942;</button>
+                    <p class="ayah-arab">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
                     <p class="ayah-translation">${ayah.translation}</p>
                 </div>
             `).join("");
@@ -858,28 +773,6 @@ gtag('config', 'G-9PG1DCJC55');
             seekBar.disabled = false;
         } catch (err) {
             document.getElementById("playerContent").innerHTML = `<span id="playerText">Gagal memuat audio.</span>`;
-        }
-    }
-
-    function checkUrlParams() {
-        const params = new URLSearchParams(location.search);
-        const surahParam = Number(params.get("surah"));
-        const ayahParam = Number(params.get("ayah"));
-
-        if (surahParam) {
-            playSurahByNumber(surahParam).then(() => {
-                if (ayahParam) {
-                    setTimeout(() => {
-                        const target = document.querySelector(`.ayah-item[data-ayah="${ayahParam}"]`);
-                        if (target) {
-                            autoScrollEnabled = false;
-                            target.scrollIntoView({ block: "center" });
-                            target.style.background = "rgba(37,99,235,0.15)";
-                            setTimeout(() => target.style.background = "", 2000);
-                        }
-                    }, 300);
-                }
-            });
         }
     }
 
@@ -952,11 +845,8 @@ gtag('config', 'G-9PG1DCJC55');
         setTimeout(() => saveQoriBtn.textContent = "Simpan", 1200);
     };
 
-    async function init() {
-        await Promise.all([loadSurahs(), loadQoriahs()]);
-        checkUrlParams();
-    }
-    init();
+    loadSurahs();
+    loadQoriahs();
 </script>
 
 </body>
