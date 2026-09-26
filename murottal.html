@@ -754,24 +754,24 @@
     }
     
     const ayahAudio = document.getElementById("ayahAudioPlayer");
-    const AYAH_AUDIO_KEYS = ["alafasy", "ahmedajamy", "husarymujawwad", "minshawi", "muhammadayyoub", "muhammadjibreel"];
     
-    function playAyah(idx) {
+    async function playAyah(idx) {
         const ayah = currentAyahs[idx];
-        const qori = getSelectedQori().replace("ar.", "");
-        const key = AYAH_AUDIO_KEYS.includes(qori) ? qori : "alafasy";
-        const url = ayah.audio[key];
+        const surahNumber = Number(audio.dataset.currentNumber);
+        const qori = getSelectedQori();
     
-        if (!url) {
-            showToast("Audio ayat tidak tersedia.");
-            return;
+        try {
+            const res = await fetch(`${API_BASE}/ayahs/${surahNumber}/${ayah.number.inSurah}/audio?qori=${qori}`);
+            const data = await res.json();
+    
+            audio.pause();
+            ayahAudio.src = data.audio;
+            ayahAudio.play();
+            showToast(`Memutar ayat ${ayah.number.inSurah} ...`);
+        } catch (err) {
+            showToast("Gagal memutar ayat.");
         }
-    
-        audio.pause();
-        ayahAudio.src = url;
-        ayahAudio.play();
-        showToast(`Memutar ayat ${ayah.number.inSurah} ...`);
-    }  
+    }
     
     function shareAyah(ayahNumber) {
         const surahNumber = Number(audio.dataset.currentNumber);
