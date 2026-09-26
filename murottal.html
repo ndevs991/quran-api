@@ -335,7 +335,9 @@
   }
   
   .ayah-dropdown button {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       width: 100%;
       padding: 8px 12px;
       background: none;
@@ -758,6 +760,29 @@
         }
     }
 
+    function checkUrlParams() {
+        const params = new URLSearchParams(location.search);
+        const surahParam = Number(params.get("surah"));
+        const ayahParam = Number(params.get("ayah"));
+    
+        if (surahParam) {
+            playSurahByNumber(surahParam).then(() => {
+                if (ayahParam) {
+                    setTimeout(() => {
+                        const target = document.querySelector(`.ayah-item[data-ayah="${ayahParam}"]`);
+                        if (target) {
+                            autoScrollEnabled = false;
+                            target.scrollIntoView({ block: "center" });
+                            target.style.transition = "background 0.4s";
+                            target.style.background = "rgba(37,99,235,0.15)";
+                            setTimeout(() => target.style.background = "", 2000);
+                        }
+                    }, 300);
+                }
+            });
+        }
+    }
+
     function formatTime(sec) {
         if (!isFinite(sec)) return "0:00";
         const m = Math.floor(sec / 60);
@@ -860,13 +885,13 @@
             currentAyahs = detail.ayahs;
 
             const ayahsHtml = detail.ayahs.map((ayah, idx) => `
-                <div class="ayah-item">
+                <div class="ayah-item" data-ayah="${ayah.number.inSurah}">
                     <div class="ayah-menu">
                         <button class="tafsir-btn" onclick="toggleAyahMenu(event, ${idx})">&#8942;</button>
                         <div class="ayah-dropdown" id="ayahDropdown-${idx}">
-                            <button onclick="openTafsir(${idx}); closeAllAyahMenus()">Tafsir</button>
-                            <button onclick="copyAyah(${idx}); closeAllAyahMenus()">Copy</button>
-                            <button onclick="shareAyah(${ayah.number.inSurah}); closeAllAyahMenus()">Bagikan</button>
+                            <button onclick="openTafsir(${idx}); closeAllAyahMenus()">📖 Tafsir</button>
+                            <button onclick="copyAyah(${idx}); closeAllAyahMenus()">📋 Copy</button>
+                            <button onclick="shareAyah(${ayah.number.inSurah}); closeAllAyahMenus()">🔗 Bagikan</button>
                         </div>
                     </div>
                     <p class="ayah-arab">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
@@ -954,8 +979,11 @@
         setTimeout(() => saveQoriBtn.textContent = "Simpan", 1200);
     };
 
-    loadSurahs();
-    loadQoriahs();
+    async function init() {
+        await Promise.all([loadSurahs(), loadQoriahs()]);
+        checkUrlParams();
+    }
+    init();
 </script>
 
 </body>
