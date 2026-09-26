@@ -290,27 +290,29 @@
         border-bottom: 0;
     }
 
-  .ayah-menu {
-      position: absolute;
-      top: 12px;
-      left: 0;
-      z-index: 2;
-  }
-  
-  .tafsir-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 0;
-      background: #1e293b;
-      color: #94a3b8;
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-  }
+    .ayah-menu {
+        position: absolute;
+        top: 12px;
+        left: 0;
+        z-index: 2;
+    }
+    
+    .tafsir-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 0;
+        background: #1e293b;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+    }
   
   .tafsir-btn:hover {
       background: #263349;
@@ -328,6 +330,7 @@
       overflow: hidden;
       min-width: 100px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 10;
   }
   
   .ayah-dropdown.open {
