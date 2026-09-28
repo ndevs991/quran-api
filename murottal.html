@@ -1044,8 +1044,8 @@
                 <span class="surah-info">
                     <span class="surah-name">${surah.name}</span>
                     <span class="surah-meta">${surah.translation} · ${surah.numberOfAyahs} ayat</span>
-                    <span class="surah-arab" aria-hidden="true">surah${String(surah.number).padStart(3, "0")}</span>
                 </span>
+                <span class="surah-arab" aria-hidden="true">surah${String(surah.number).padStart(3, "0")}</span>
             `;
             btn.onclick = () => playSurahByNumber(surah.number);
             surahListEl.appendChild(btn);
