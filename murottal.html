@@ -30,6 +30,12 @@
         unicode-range: U+0600-06FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE80-FEFC;
     }
 
+    @font-face {
+        font-family: 'surah-name-v4-icon';
+        src: url('https://static-cdn.tarteel.ai/qul/fonts/surah-names/v4/surah-name-v4.ttf') format('truetype');
+        font-display: block;
+    }  
+
     * {
         box-sizing: border-box;
     }
@@ -194,6 +200,16 @@
         font-size: 11px;
         margin-top: 2px;
     }
+
+    .surah-arab {
+        margin-left: auto;
+        flex-shrink: 0;
+        font-family: 'surah-name-v4-icon';
+        font-size: 26px;
+        line-height: 1;
+        color: #7dd3fc;
+        opacity: 0.85;
+    }  
     
     .surah-btn.active .surah-name {
         color: #fff;
@@ -206,6 +222,11 @@
     .surah-btn.active .surah-number {
         background: rgba(255,255,255,0.15);
         color: #fff;
+    }
+
+    .surah-btn.active .surah-arab {
+        color: #fff;
+        opacity: 1;
     }
 
     .footer-box {
@@ -1023,6 +1044,7 @@
                 <span class="surah-info">
                     <span class="surah-name">${surah.name}</span>
                     <span class="surah-meta">${surah.translation} · ${surah.numberOfAyahs} ayat</span>
+                    <span class="surah-arab" aria-hidden="true">surah${String(surah.number).padStart(3, "0")}</span>
                 </span>
             `;
             btn.onclick = () => playSurahByNumber(surah.number);
