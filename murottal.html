@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Murottal Player — Dengarkan Al-Qur'an per Surah | Quran API</title>
+<link rel="canonical" href="https://quran-api-991.vercel.app/murottal.html">  
 <meta name="description" content="Dengarkan murottal Al-Qur'an per surah lengkap dengan teks arab, terjemahan, dan tafsir. Pilih qori favorit Anda — gratis dan interaktif.">
 
 <!-- Google tag (gtag.js) -->
@@ -13,7 +14,9 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-9PG1DCJC55');
+  gtag('config', 'G-9PG1DCJC55', {
+    cookie_domain: location.hostname
+  });
 </script>    
     
 <style>
