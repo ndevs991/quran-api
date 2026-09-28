@@ -2,6 +2,11 @@ import quran from "../quran.json";
 
 export default function handler(req, res) {
     res.status(200).json(
-        quran.map(({ number, name }) => ({ number, name }))
+        quran.map(({ number, name, translation, numberOfAyahs }) => ({
+            number,
+            name,
+            translation,
+            numberOfAyahs
+        }))
     );
 }
