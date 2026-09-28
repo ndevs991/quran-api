@@ -290,6 +290,10 @@
         position: relative;
     }
 
+    .player-head.idle {
+        justify-content: center;
+    }  
+
     .scroll-controls {
         display: none;
         align-items: center;
@@ -739,7 +743,7 @@
     </div>
 
     <div class="panel panel-player">
-        <div class="player-head">
+        <div class="player-head idle">
             <span id="playerTitle">🕋</span>
             <div class="scroll-controls">
                 <select id="jumpAyahSelect" class="jump-select" onchange="jumpToAyah(this.value)">
@@ -1114,6 +1118,7 @@
 
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
             document.querySelector(".scroll-controls").style.display = "flex";
+            document.querySelector(".player-head").classList.remove("idle");
 
             currentAyahs = detail.ayahs;
 
