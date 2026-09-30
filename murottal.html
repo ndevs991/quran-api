@@ -106,6 +106,40 @@
         color: #64748b;
     }
 
+    .search-input-wrapper {
+        position: relative;
+        flex: 1;
+    }
+    
+    .search-input-wrapper input {
+        width: 100%;
+        padding: 10px 32px 10px 12px;
+    }
+    
+    .search-clear {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 0;
+        background: #263349;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .search-clear:hover {
+        background: #2b3648;
+        color: #e2e8f0;
+    }
+
     .settings-btn {
         width: 30px;
         height: 30px;
@@ -718,7 +752,10 @@
 
     <div class="panel panel-list">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari nama surat ...">
+            <div class="search-input-wrapper">
+                <input type="text" id="searchInput" placeholder="Cari nama surat ...">
+                <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">&times;</button>
+            </div>
             <button class="settings-btn" onclick="toggleSettingsPopover(event)">⚙️</button>
         
             <div class="settings-popover" id="settingsPopover">
@@ -1212,8 +1249,16 @@
 
     searchInput.oninput = () => {
         const q = searchInput.value.toLowerCase();
+        document.getElementById("searchClear").style.display = q ? "flex" : "none";
         renderSurahList(surahs.filter(s => s.name.toLowerCase().includes(q)));
     };
+    
+    function clearSearch() {
+        searchInput.value = "";
+        document.getElementById("searchClear").style.display = "none";
+        renderSurahList(surahs);
+        searchInput.focus();
+    }
 
     saveQoriBtn.onclick = () => {
         localStorage.setItem("qoriah_murottal", qoriSelect.value);
