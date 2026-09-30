@@ -87,7 +87,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 0 14px;
+        padding: 0 12px;
         border-bottom: 1px solid #1e293b;
         position: relative;
     }
@@ -273,7 +273,7 @@
     }
 
     .footer-box {
-        padding: 14px;
+        padding: 14px 12px;
         border-top: 1px solid #1e293b;
     }
 
@@ -754,7 +754,11 @@
         <div class="search-box">
             <div class="search-input-wrapper">
                 <input type="text" id="searchInput" placeholder="Cari nama surat ...">
-                <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">&times;</button>
+                <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
             </div>
             <button class="settings-btn" onclick="toggleSettingsPopover(event)">⚙️</button>
         
