@@ -56,6 +56,7 @@ export default async function handler(req, res) {
 
     const finalQoriData = qoriahs.find(q => q.identifier === finalQori);
 
+    res.setHeader("Cache-Control", "public, s-maxage=86400, stale-while-revalidate");
     res.status(200).json({
         surah: {
             number: surah.number,
