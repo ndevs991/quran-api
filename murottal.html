@@ -1328,7 +1328,7 @@
         return String(number).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
     }
 
-    async function playSurahByNumber(number) {
+    async function playSurahByNumber(number, autoplay = true) {
         const surah = surahs.find(s => s.number === number);
         if (!surah) return;
 
@@ -1360,7 +1360,7 @@
 
             audio.dataset.currentNumber = surah.number;
             audio.src = audioData.audio;
-            audio.play();
+            if (autoplay) audio.play();
 
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
             document.querySelector(".scroll-controls").style.display = "flex";
@@ -1570,18 +1570,25 @@
     }
     
     function openAyah(surahNumber, ayahNumber) {
-        playSurahByNumber(surahNumber).then(() => {
-            const target = document.querySelector(`.ayah-item[data-ayah="${ayahNumber}"]`);
-            if (!target) return;
+        playSurahByNumber(surahNumber, false).then(() => {
+            if (Number(audio.dataset.currentNumber) !== surahNumber) return;
     
-            autoScrollEnabled = false;
-            autoScrollBtn.style.display = "inline-block";
-            target.scrollIntoView({ block: "nearest" });
-            target.style.transition = "background 0.4s";
-            target.style.background = "rgba(37,99,235,0.15)";
-            setTimeout(() => target.style.background = "", 2000);
+            const idx = currentAyahs.findIndex(a => a.number.inSurah === ayahNumber);
+            if (idx === -1) return;
+    
+            const target = document.querySelector(`.ayah-item[data-ayah="${ayahNumber}"]`);
+            if (target) {
+                autoScrollEnabled = false;
+                autoScrollBtn.style.display = "inline-block";
+                target.scrollIntoView({ block: "nearest" });
+                target.style.transition = "background 0.4s";
+                target.style.background = "rgba(37,99,235,0.15)";
+                setTimeout(() => target.style.background = "", 2000);
+            }
+    
+            playAyah(idx);
         });
-    }  
+    }
 
     saveQoriBtn.onclick = () => {
         localStorage.setItem("qoriah_murottal", qoriSelect.value);
