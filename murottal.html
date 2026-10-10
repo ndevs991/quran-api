@@ -111,9 +111,24 @@
         flex: 1;
     }
     
+    .search-mode-select {
+        position: absolute;
+        left: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 66px;
+        padding: 4px 6px;
+        background: #1e293b;
+        border: 0;
+        border-radius: 4px;
+        color: #7dd3fc;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    
     .search-input-wrapper input {
         width: 100%;
-        padding: 10px 32px 10px 12px;
+        padding: 10px 32px 10px 80px;
     }
     
     .search-clear {
@@ -753,6 +768,10 @@
     <div class="panel panel-list">
         <div class="search-box">
             <div class="search-input-wrapper">
+                <select id="searchModeSelect" class="search-mode-select" onchange="setSearchMode(this.value)">
+                    <option value="surah">Surah</option>
+                    <option value="ayah">Ayat</option>
+                </select>              
                 <input type="text" id="searchInput" placeholder="Cari nama surat ...">
                 <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -864,6 +883,8 @@
     let currentSurahName = "";
     let activeTafsirIndex = null;
     let activeTafsirSource = "kemenag";
+    let searchTimer;
+    let searchRequestId = 0;  
 
     const tafsirOverlay = document.getElementById("tafsirOverlay");
     const tafsirTitle = document.getElementById("tafsirTitle");
@@ -1416,6 +1437,99 @@
         renderSurahList(surahs);
         searchInput.focus();
     }
+
+    function escapeHtml(s) {
+        return s.replace(/[&<>"']/g, c => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+    }
+    
+    function highlight(text, q) {
+        const pattern = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return text
+            .split(new RegExp(`(${pattern})`, "gi"))
+            .map((part, i) => i % 2 ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part))
+            .join("");
+    }
+    
+    function showSearchMessage(text) {
+        surahListEl.innerHTML = `<div class="search-info">${text}</div>`;
+    }
+    
+    function setSearchMode(mode) {
+        searchMode = mode;
+        searchInput.placeholder = mode === "surah"
+            ? "Cari nama surat ..."
+            : "Cari ayat ...";
+        clearSearch();
+    }
+    
+    async function searchAyah(q) {
+        const requestId = ++searchRequestId;
+    
+        if (q.length < 3) {
+            showSearchMessage("Ketik minimal 3 huruf untuk mencari ayat.");
+            return;
+        }
+    
+        showSearchMessage("Mencari ...");
+    
+        try {
+            const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (requestId !== searchRequestId) return;
+            renderAyahResults(data, q);
+        } catch (err) {
+            if (requestId !== searchRequestId) return;
+            showSearchMessage("Gagal mencari ayat.");
+        }
+    }
+    
+    function renderAyahResults(data, q) {
+        if (!data.results || !data.results.length) {
+            showSearchMessage("Tidak ada ayat yang cocok.");
+            return;
+        }
+    
+        const isArabic = /[\u0600-\u06FF]/.test(q);
+        const shown = data.results.slice(0, 50);
+    
+        surahListEl.innerHTML = "";
+    
+        const info = document.createElement("div");
+        info.className = "search-info";
+        info.textContent = data.total > shown.length
+            ? `${data.total} ayat ditemukan, menampilkan ${shown.length} pertama`
+            : `${data.total} ayat ditemukan`;
+        surahListEl.appendChild(info);
+    
+        shown.forEach(r => {
+            const btn = document.createElement("button");
+            btn.className = "result-btn";
+            btn.innerHTML = `
+                <span class="result-meta">${escapeHtml(r.surah.name)} : ${r.number.inSurah}</span>
+                <span class="${isArabic ? "result-arab" : "result-text"}">${highlight(isArabic ? r.arab : r.translation, q)}</span>
+            `;
+            btn.onclick = () => openAyah(r.surah.number, r.number.inSurah);
+            surahListEl.appendChild(btn);
+        });
+    
+        surahListEl.scrollTop = 0;
+    }
+    
+    function openAyah(surahNumber, ayahNumber) {
+        playSurahByNumber(surahNumber).then(() => {
+            const target = document.querySelector(`.ayah-item[data-ayah="${ayahNumber}"]`);
+            if (!target) return;
+    
+            autoScrollEnabled = false;
+            autoScrollBtn.style.display = "inline-block";
+            target.scrollIntoView({ block: "nearest" });
+            target.style.transition = "background 0.4s";
+            target.style.background = "rgba(37,99,235,0.15)";
+            setTimeout(() => target.style.background = "", 2000);
+        });
+    }  
 
     saveQoriBtn.onclick = () => {
         localStorage.setItem("qoriah_murottal", qoriSelect.value);
