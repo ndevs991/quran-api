@@ -1041,11 +1041,33 @@
     
         let y = headerH;
     
+        const marker = `۝${toArabicNumber(ayahNumber)}`;
+        
         ctx.direction = "rtl";
         ctx.font = arabFont;
-        ctx.fillStyle = "#e2e8f0";
-        arabLines.forEach(line => {
-            ctx.fillText(line, W / 2, y + arabLH / 2);
+        arabLines.forEach((line, i) => {
+            const cy = y + arabLH / 2;
+            const isLast = i === arabLines.length - 1;
+        
+            if (isLast && line.endsWith(marker)) {
+                const text = line.slice(0, -marker.length).trimEnd();
+                const textW = text ? ctx.measureText(text).width : 0;
+                const spaceW = text ? ctx.measureText(" ").width : 0;
+                const markerW = ctx.measureText(marker).width;
+                const xRight = W / 2 + (textW + spaceW + markerW) / 2;
+        
+                ctx.textAlign = "right";
+                if (text) {
+                    ctx.fillStyle = "#e2e8f0";
+                    ctx.fillText(text, xRight, cy);
+                }
+                ctx.fillStyle = "#E5AF76";
+                ctx.fillText(marker, xRight - textW - spaceW, cy);
+                ctx.textAlign = "center";
+            } else {
+                ctx.fillStyle = "#e2e8f0";
+                ctx.fillText(line, W / 2, cy);
+            }
             y += arabLH;
         });
     
