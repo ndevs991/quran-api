@@ -202,50 +202,24 @@
         padding: 2px 4px;
     }
     
-    .result-btn {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        background: #1e293b;
-        border: 1px solid #2b3648;
-        border-radius: 8px;
-        padding: 8px 12px;
-        cursor: pointer;
-        text-align: left;
-    }
-    
-    .result-btn:hover {
-        background: #263349;
-    }
-    
-    .result-meta {
-        color: #7dd3fc;
-        font-size: 12px;
-        font-weight: bold;
-    }
-    
-    .result-text,
-    .result-arab {
+    .surah-snippet {
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.5;
         display: -webkit-box;
         -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
         overflow: hidden;
     }
     
-    .result-text {
+    .surah-snippet.is-arab {
         color: #cbd5e1;
-        font-size: 12px;
-        line-height: 1.5;
-        -webkit-line-clamp: 3;
-    }
-    
-    .result-arab {
-        color: #e2e8f0;
         font-family: "Amiri", "Traditional Arabic", Tahoma, sans-serif;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.8;
         direction: rtl;
         text-align: right;
-        -webkit-line-clamp: 2;
     }
     
     mark {
@@ -1579,10 +1553,14 @@
     
         shown.forEach(r => {
             const btn = document.createElement("button");
-            btn.className = "result-btn";
+            btn.className = "surah-btn";
             btn.innerHTML = `
-                <span class="result-meta">${escapeHtml(r.surah.name)} : ${r.number.inSurah}</span>
-                <span class="${isArabic ? "result-arab" : "result-text"}">${highlight(isArabic ? r.arab : r.translation, q)}</span>
+                <span class="surah-number">${r.number.inSurah}</span>
+                <span class="surah-info">
+                    <span class="surah-name">${escapeHtml(r.surah.name)}</span>
+                    <span class="surah-snippet${isArabic ? " is-arab" : ""}">${highlight(isArabic ? r.arab : r.translation, q)}</span>
+                </span>
+                <span class="surah-arab" aria-hidden="true">surah${String(r.surah.number).padStart(3, "0")}</span>
             `;
             btn.onclick = () => openAyah(r.surah.number, r.number.inSurah);
             surahListEl.appendChild(btn);
