@@ -1499,6 +1499,23 @@
             .map((part, i) => i % 2 ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part))
             .join("");
     }
+
+    function makeSnippet(text, q, before, after) {
+        const pattern = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const m = new RegExp(pattern, "i").exec(text);
+        if (!m || text.length <= before + after) return text;
+    
+        let start = Math.max(0, m.index - before);
+        if (start > 0) start = text.lastIndexOf(" ", start) + 1;
+    
+        let end = Math.min(text.length, m.index + m[0].length + after);
+        if (end < text.length) {
+            const sp = text.indexOf(" ", end);
+            end = sp === -1 ? text.length : sp;
+        }
+    
+        return (start > 0 ? "… " : "") + text.slice(start, end) + (end < text.length ? " …" : "");
+    }
     
     function showSearchMessage(text) {
         surahListEl.innerHTML = `<div class="search-info">${text}</div>`;
@@ -1558,7 +1575,7 @@
                 <span class="surah-number">${r.number.inSurah}</span>
                 <span class="surah-info">
                     <span class="surah-name">${escapeHtml(r.surah.name)}</span>
-                    <span class="surah-snippet${isArabic ? " is-arab" : ""}">${highlight(isArabic ? r.arab : r.translation, q)}</span>
+                    <span class="surah-snippet${isArabic ? " is-arab" : ""}">${highlight(isArabic ? makeSnippet(r.arab, q, 10, 50) : makeSnippet(r.translation, q, 15, 70), q)}</span>
                 </span>
                 <span class="surah-arab" aria-hidden="true">surah${String(r.surah.number).padStart(3, "0")}</span>
             `;
