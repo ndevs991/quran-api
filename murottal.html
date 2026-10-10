@@ -195,6 +195,64 @@
         color: #94a3b8;
         white-space: nowrap;
     }
+
+    .search-info {
+        color: #64748b;
+        font-size: 11px;
+        padding: 2px 4px;
+    }
+    
+    .result-btn {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        background: #1e293b;
+        border: 1px solid #2b3648;
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        text-align: left;
+    }
+    
+    .result-btn:hover {
+        background: #263349;
+    }
+    
+    .result-meta {
+        color: #7dd3fc;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .result-text,
+    .result-arab {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .result-text {
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.5;
+        -webkit-line-clamp: 3;
+    }
+    
+    .result-arab {
+        color: #e2e8f0;
+        font-family: "Amiri", "Traditional Arabic", Tahoma, sans-serif;
+        font-size: 18px;
+        line-height: 1.8;
+        direction: rtl;
+        text-align: right;
+        -webkit-line-clamp: 2;
+    }
+    
+    mark {
+        background: rgba(229, 175, 118, 0.2);
+        color: #E5AF76;
+        border-radius: 2px;
+    }
     
     .surah-list {
         flex: 1;
