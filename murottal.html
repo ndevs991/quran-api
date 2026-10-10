@@ -861,6 +861,7 @@
     let isProgrammaticScroll = false;
     let autoScrollSpeed = 1;
     let currentAyahs = [];
+    let currentSurahName = "";
     let activeTafsirIndex = null;
     let activeTafsirSource = "kemenag";
 
@@ -964,6 +965,134 @@
             navigator.clipboard.writeText(url).then(() => showToast("Link ayat disalin!"));
         }
     }
+
+    function wrapText(ctx, text, maxWidth) {
+        const words = text.split(" ");
+        const lines = [];
+        let line = "";
+    
+        words.forEach(word => {
+            const test = line ? `${line} ${word}` : word;
+            if (ctx.measureText(test).width > maxWidth && line) {
+                lines.push(line);
+                line = word;
+            } else {
+                line = test;
+            }
+        });
+    
+        if (line) lines.push(line);
+        return lines;
+    }
+    
+    async function shareAyahImage(idx) {
+        const ayah = currentAyahs[idx];
+        const ayahNumber = ayah.number.inSurah;
+        const W = 1080;
+        const PAD = 90;
+        const maxWidth = W - PAD * 2;
+    
+        const arabFont = "64px Amiri, 'Traditional Arabic', serif";
+        const transFont = "34px Roboto, Arial, sans-serif";
+        const arabText = `${ayah.arab} ۝${toArabicNumber(ayahNumber)}`;
+    
+        await document.fonts.load("64px Amiri", arabText);
+    
+        const measure = document.createElement("canvas").getContext("2d");
+        measure.direction = "rtl";
+        measure.font = arabFont;
+        const arabLines = wrapText(measure, arabText, maxWidth);
+    
+        measure.direction = "ltr";
+        measure.font = transFont;
+        const transLines = wrapText(measure, ayah.translation, maxWidth);
+    
+        const arabLH = 64 * 1.9;
+        const transLH = 34 * 1.55;
+        const headerH = 150;
+        const footerH = 130;
+        const gap = 70;
+        const H = headerH + arabLines.length * arabLH + gap + transLines.length * transLH + footerH;
+    
+        const canvas = document.createElement("canvas");
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext("2d");
+    
+        const bg = ctx.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, "#0b1120");
+        bg.addColorStop(1, "#111827");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+    
+        const glow = ctx.createRadialGradient(W, H, 0, W, H, 520);
+        glow.addColorStop(0, "rgba(37,99,235,0.35)");
+        glow.addColorStop(1, "rgba(37,99,235,0)");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, W, H);
+    
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+    
+        ctx.direction = "ltr";
+        ctx.font = "bold 34px Roboto, Arial, sans-serif";
+        ctx.fillStyle = "#7dd3fc";
+        ctx.fillText(`${currentSurahName} · Ayat ${ayahNumber}`, W / 2, headerH / 2);
+    
+        let y = headerH;
+    
+        ctx.direction = "rtl";
+        ctx.font = arabFont;
+        ctx.fillStyle = "#e2e8f0";
+        arabLines.forEach(line => {
+            ctx.fillText(line, W / 2, y + arabLH / 2);
+            y += arabLH;
+        });
+    
+        y += gap / 2;
+        ctx.strokeStyle = "#2b3648";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(W / 2 - 80, y);
+        ctx.lineTo(W / 2 + 80, y);
+        ctx.stroke();
+        y += gap / 2;
+    
+        ctx.direction = "ltr";
+        ctx.font = transFont;
+        ctx.fillStyle = "#cbd5e1";
+        transLines.forEach(line => {
+            ctx.fillText(line, W / 2, y + transLH / 2);
+            y += transLH;
+        });
+    
+        ctx.font = "26px Roboto, Arial, sans-serif";
+        ctx.fillStyle = "#64748b";
+        ctx.fillText(`${location.host}${location.pathname}`, W / 2, H - footerH / 2);
+    
+        canvas.toBlob(async (blob) => {
+            const safeName = currentSurahName.replace(/[^\w]+/g, "-");
+            const fileName = `${safeName}-ayat-${ayahNumber}.png`;
+            const file = new File([blob], fileName, { type: "image/png" });
+    
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file] });
+                    return;
+                } catch (err) {
+                    if (err.name === "AbortError") return;
+                }
+            }
+    
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showToast("Gambar disimpan");
+        }, "image/png");
+    }  
 
     function checkUrlParams() {
         const params = new URLSearchParams(location.search);
@@ -1162,6 +1291,7 @@
             document.querySelector(".player-head").classList.remove("idle");
 
             currentAyahs = detail.ayahs;
+            currentSurahName = detail.name;
 
             populateJumpAyahSelect();
 
@@ -1174,6 +1304,7 @@
                             <button onclick="openTafsir(${idx}); closeAllAyahMenus()">📖 Lihat Tafsir</button>
                             <button onclick="copyAyah(${idx}); closeAllAyahMenus()">📋 Copy</button>
                             <button onclick="shareAyah(${ayah.number.inSurah}); closeAllAyahMenus()">🔗 Bagikan</button>
+                            <button onclick="shareAyahImage(${idx}); closeAllAyahMenus()">🖼️ Bagikan Gambar Ayat</button>
                         </div>
                     </div>
                     <p class="ayah-arab">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
