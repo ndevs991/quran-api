@@ -884,6 +884,7 @@
     let activeTafsirIndex = null;
     let activeTafsirSource = "kemenag";
     let searchTimer;
+    let searchMode = "surah";
     let searchRequestId = 0;  
 
     const tafsirOverlay = document.getElementById("tafsirOverlay");
@@ -1426,15 +1427,30 @@
     };
 
     searchInput.oninput = () => {
-        const q = searchInput.value.toLowerCase();
-        document.getElementById("searchClear").style.display = q ? "flex" : "none";
-        renderSurahList(surahs.filter(s => s.name.toLowerCase().includes(q)));
+        const value = searchInput.value.trim();
+        document.getElementById("searchClear").style.display = value ? "flex" : "none";
+    
+        if (searchMode === "surah") {
+            const q = value.toLowerCase();
+            renderSurahList(surahs.filter(s => s.name.toLowerCase().includes(q)));
+            return;
+        }
+    
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => searchAyah(value), 400);
     };
     
     function clearSearch() {
         searchInput.value = "";
         document.getElementById("searchClear").style.display = "none";
-        renderSurahList(surahs);
+        clearTimeout(searchTimer);
+        searchRequestId++;
+    
+        if (searchMode === "surah") {
+            renderSurahList(surahs);
+        } else {
+            showSearchMessage("Ketik minimal 3 huruf untuk mencari ayat.");
+        }
         searchInput.focus();
     }
 
