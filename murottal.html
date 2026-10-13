@@ -40,6 +40,10 @@
         box-sizing: border-box;
     }
 
+    .mt-10 {
+      margin-top: 10px !important;
+    }
+
     body {
         margin: 0;
         font-family: Roboto, Arial, sans-serif;
@@ -497,6 +501,10 @@
         border-bottom: 0;
     }
 
+    .ayah-item.playing {
+        background: rgba(37, 99, 235, 0.12);
+    }  
+
     .ayah-menu {
         position: absolute;
         top: 12px;
@@ -820,6 +828,14 @@
                     <span class="speed-label" id="fontSizeLabel">Normal</span>
                     <button class="speed-btn" onclick="adjustArabicFontSize(1)">A+</button>
                 </div>
+
+                <div class="font-size-control mt-10">
+                    <span>Mode putar</span>
+                    <select id="playModeSelect" class="jump-select" onchange="setPlayMode(this.value)">
+                        <option value="surah">Per Surah</option>
+                        <option value="ayah">Per Ayat</option>
+                    </select>
+                </div>              
             </div>
         </div>
 
@@ -919,6 +935,15 @@
     let searchMode = "surah";
     let searchRequestId = 0;  
 
+    let playMode = localStorage.getItem("playMode") === "ayah" ? "ayah" : "surah";
+    let currentAyahIndex = -1;
+    let playToken = 0;
+    const ayahUrlCache = new Map();
+    const preloader = new Audio();
+    preloader.preload = "auto";
+    
+    document.getElementById("playModeSelect").value = playMode;  
+
     const tafsirOverlay = document.getElementById("tafsirOverlay");
     const tafsirTitle = document.getElementById("tafsirTitle");
     const tafsirBody = document.getElementById("tafsirBody");
@@ -966,6 +991,76 @@
     function closeAllAyahMenus() {
         document.querySelectorAll(".ayah-dropdown.open").forEach(el => el.classList.remove("open"));
     }
+
+    async function getAyahAudioUrl(surahNumber, ayahNumber) {
+        const qori = getSelectedQori();
+        const key = `${qori}:${surahNumber}:${ayahNumber}`;
+        if (ayahUrlCache.has(key)) return ayahUrlCache.get(key);
+    
+        const res = await fetch(`${API_BASE}/ayahs/${surahNumber}/${ayahNumber}/audio?qori=${qori}`);
+        const data = await res.json();
+        if (!data.audio) throw new Error("Audio tidak tersedia");
+    
+        ayahUrlCache.set(key, data.audio);
+        return data.audio;
+    }
+    
+    async function prefetchAyah(idx) {
+        if (idx >= currentAyahs.length) return;
+        try {
+            const url = await getAyahAudioUrl(Number(audio.dataset.currentNumber), currentAyahs[idx].number.inSurah);
+            preloader.src = url;
+        } catch (err) {}
+    }
+    
+    function scrollToAyahItem(el) {
+        const delta = el.getBoundingClientRect().top - playerBodyInner.getBoundingClientRect().top - 12;
+        if (Math.abs(delta) < 1) return;
+    
+        const before = playerBodyInner.scrollTop;
+        isProgrammaticScroll = true;
+        playerBodyInner.scrollTop = before + delta;
+        if (playerBodyInner.scrollTop === before) isProgrammaticScroll = false;
+    }
+    
+    function highlightCurrentAyah(idx) {
+        document.querySelectorAll(".ayah-item.playing").forEach(el => el.classList.remove("playing"));
+    
+        const el = document.querySelector(`.ayah-item[data-ayah="${currentAyahs[idx].number.inSurah}"]`);
+        if (!el) return;
+    
+        el.classList.add("playing");
+        if (autoScrollEnabled) scrollToAyahItem(el);
+    }
+    
+    async function playAyahAt(idx) {
+        const token = ++playToken;
+        const ayah = currentAyahs[idx];
+        const surahNumber = Number(audio.dataset.currentNumber);
+    
+        currentAyahIndex = idx;
+        highlightCurrentAyah(idx);
+    
+        try {
+            const url = await getAyahAudioUrl(surahNumber, ayah.number.inSurah);
+            if (token !== playToken) return;
+    
+            ayahAudio.pause();
+            audio.src = url;
+            await audio.play();
+            prefetchAyah(idx + 1);
+        } catch (err) {
+            if (token === playToken) showToast("Gagal memutar ayat.");
+        }
+    }
+    
+    function setPlayMode(mode) {
+        playMode = mode;
+        localStorage.setItem("playMode", mode);
+    
+        const current = Number(audio.dataset.currentNumber);
+        if (current) playSurahByNumber(current);
+    }  
     
     document.addEventListener("click", closeAllAyahMenus);
     
@@ -993,6 +1088,11 @@
     const ayahAudio = document.getElementById("ayahAudioPlayer");
     
     async function playAyah(idx) {
+        if (playMode === "ayah") {
+            playAyahAt(idx);
+            return;
+        }  
+      
         const ayah = currentAyahs[idx];
         const surahNumber = Number(audio.dataset.currentNumber);
         const qori = getSelectedQori();
@@ -1207,6 +1307,11 @@
     function enableAutoScroll() {
         autoScrollEnabled = true;
         autoScrollBtn.style.display = "none";
+    
+        if (playMode === "ayah") {
+            const el = document.querySelector(".ayah-item.playing");
+            if (el) scrollToAyahItem(el);
+        }
     }
 
     function adjustScrollSpeed(delta) {
@@ -1227,6 +1332,14 @@
     
     function jumpToAyah(ayahNumber) {
         if (!ayahNumber) return;
+      
+        if (playMode === "ayah") {
+            const idx = currentAyahs.findIndex(a => a.number.inSurah === Number(ayahNumber));
+            if (idx !== -1) playAyahAt(idx);
+            document.getElementById("jumpAyahSelect").value = "";
+            return;
+        }
+      
         const target = document.querySelector(`.ayah-item[data-ayah="${ayahNumber}"]`);
         if (target) {
             autoScrollEnabled = false;
@@ -1333,6 +1446,8 @@
         if (!surah) return;
 
         ayahAudio.pause();
+        audio.pause();
+        playToken++;      
 
         autoScrollEnabled = true;
         autoScrollBtn.style.display = "none";
@@ -1353,14 +1468,18 @@
             const qori = getSelectedQori();
             const [detailRes, audioRes] = await Promise.all([
                 fetch(`${API_BASE}/surahs/${surah.number}`),
-                fetch(`${API_BASE}/surahs/${surah.number}/audio?qori=${qori}`)
+                playMode === "surah"
+                    ? fetch(`${API_BASE}/surahs/${surah.number}/audio?qori=${qori}`)
+                    : Promise.resolve(null)
             ]);
             const detail = await detailRes.json();
-            const audioData = await audioRes.json();
-
+            
             audio.dataset.currentNumber = surah.number;
-            audio.src = audioData.audio;
-            if (autoplay) audio.play();
+            if (audioRes) {
+                const audioData = await audioRes.json();
+                audio.src = audioData.audio;
+                if (autoplay) audio.play();
+            }
 
             document.getElementById("playerTitle").textContent = `${detail.name} - ${detail.revelation}`;
             document.querySelector(".scroll-controls").style.display = "flex";
@@ -1394,12 +1513,18 @@
 
             playBtn.disabled = false;
             seekBar.disabled = false;
+            if (playMode === "ayah" && autoplay) playAyahAt(0);
         } catch (err) {
             document.getElementById("playerContent").innerHTML = `<span id="playerText">Gagal memuat audio.</span>`;
         }
     }
 
     audio.onended = () => {
+        if (playMode === "ayah" && currentAyahIndex + 1 < currentAyahs.length) {
+            playAyahAt(currentAyahIndex + 1);
+            return;
+        }
+    
         const current = Number(audio.dataset.currentNumber);
         const next = surahs.find(s => s.number === current + 1);
         if (next) {
@@ -1431,7 +1556,7 @@
             durationEl.textContent = formatTime(audio.duration);
 
             const startOffset = 10;
-            if (autoScrollEnabled && audio.currentTime >= startOffset) {
+            if (playMode === "surah" && autoScrollEnabled && audio.currentTime >= startOffset) {
                 const inner = document.querySelector(".player-body-inner");
                 const progress = (audio.currentTime - startOffset) / (audio.duration - startOffset);
                 const adjustedProgress = Math.min(1, Math.max(0, progress * autoScrollSpeed));
@@ -1592,6 +1717,11 @@
     
             const idx = currentAyahs.findIndex(a => a.number.inSurah === ayahNumber);
             if (idx === -1) return;
+    
+            if (playMode === "ayah") {
+                playAyahAt(idx);
+                return;
+            }
     
             const target = document.querySelector(`.ayah-item[data-ayah="${ayahNumber}"]`);
             if (target) {
