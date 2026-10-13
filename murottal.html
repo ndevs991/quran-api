@@ -182,7 +182,8 @@
         background: #1e293b;
         border: 1px solid #2b3648;
         border-radius: 8px;
-        padding: 12px;
+        width: 260px;
+        padding: 4px 14px;
         z-index: 20;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
@@ -191,13 +192,38 @@
         display: block;
     }
     
-    .font-size-control {
+    .setting-row {
         display: flex;
         align-items: center;
-        gap: 8px;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #2b3648;
+    }
+    
+    .setting-row:last-child {
+        border-bottom: 0;
+    }
+    
+    .setting-label {
         font-size: 12px;
         color: #94a3b8;
         white-space: nowrap;
+    }
+    
+    .setting-control {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .setting-control .speed-label {
+        width: 72px;
+    }
+    
+    .setting-control .jump-select {
+        width: 124px;
+        background: #0b1120;
     }
 
     .search-info {
@@ -492,7 +518,8 @@
     }
 
     .ayah-item {
-        padding: 14px 0;
+        margin: 0 -12px;
+        padding: 14px 12px;
         border-bottom: 1px solid #1e293b;
         position: relative;
     }
@@ -503,12 +530,14 @@
 
     .ayah-item.playing {
         background: rgba(37, 99, 235, 0.12);
-    }  
+        border-radius: 8px;
+        border-bottom-color: transparent;
+    } 
 
     .ayah-menu {
         position: absolute;
         top: 12px;
-        left: 0;
+        left: 12px;
     }
     
     .tafsir-btn {
@@ -822,20 +851,23 @@
             <button class="settings-btn" onclick="toggleSettingsPopover(event)">⚙️</button>
         
             <div class="settings-popover" id="settingsPopover">
-                <div class="font-size-control">
-                    <span>Ukuran Arab</span>
-                    <button class="speed-btn" onclick="adjustArabicFontSize(-1)">A−</button>
-                    <span class="speed-label" id="fontSizeLabel">Normal</span>
-                    <button class="speed-btn" onclick="adjustArabicFontSize(1)">A+</button>
+                <div class="setting-row">
+                    <span class="setting-label">Ukuran Arab</span>
+                    <div class="setting-control">
+                        <button class="speed-btn" onclick="adjustArabicFontSize(-1)">A−</button>
+                        <span class="speed-label" id="fontSizeLabel">Normal</span>
+                        <button class="speed-btn" onclick="adjustArabicFontSize(1)">A+</button>
+                    </div>
                 </div>
-
-                <div class="font-size-control mt-10">
-                    <span>Mode putar</span>
-                    <select id="playModeSelect" class="jump-select" onchange="setPlayMode(this.value)">
-                        <option value="surah">Per Surah</option>
-                        <option value="ayah">Per Ayat</option>
-                    </select>
-                </div>              
+                <div class="setting-row">
+                    <span class="setting-label">Mode putar</span>
+                    <div class="setting-control">
+                        <select id="playModeSelect" class="jump-select" onchange="setPlayMode(this.value)">
+                            <option value="surah">Per Surah</option>
+                            <option value="ayah">Per Ayat</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
