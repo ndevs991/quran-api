@@ -522,17 +522,35 @@
         padding: 14px 12px;
         border-bottom: 1px solid #1e293b;
         position: relative;
+        transition: background-color 0.4s ease, box-shadow 0.4s ease;
     }
 
     .ayah-item:last-child {
         border-bottom: 0;
     }
 
+    .ayah-item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(
+            to right,
+            rgba(37, 99, 235, 0.12) calc(100% - 48px),
+            rgba(37, 99, 235, 0) 100%
+        );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
+    .ayah-item.playing::before {
+        opacity: 1;
+    }
+    
     .ayah-item.playing {
-        background: rgba(37, 99, 235, 0.12);
-        border-radius: 8px;
-        border-bottom-color: transparent;
-    } 
+        box-shadow: inset 2px 0 0 #2563eb;
+    }
 
     .ayah-menu {
         position: absolute;
