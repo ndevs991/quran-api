@@ -49,7 +49,7 @@
         }
 
         .ref {
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--accent);
         }
