@@ -1511,6 +1511,11 @@
             activeBtn = null;
         }
 
+        if (playerBodyInner.scrollTop !== 0) {
+            isProgrammaticScroll = true;
+            playerBodyInner.scrollTop = 0;
+        }     
+      
         document.getElementById("playerTitle").textContent = "Memuat ...";
         document.getElementById("playerContent").innerHTML = `<span id="playerText">Memuat ${surah.name} ...</span>`;
 
