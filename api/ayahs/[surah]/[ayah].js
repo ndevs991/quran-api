@@ -1,8 +1,8 @@
-res.setHeader("Access-Control-Allow-Origin", "*");
-
 import quran from "../../../quran.json";
 
 export default function handler(req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    
     const surahNumber = Number(req.query.surah);
     const ayahNumber = Number(req.query.ayah);
 
