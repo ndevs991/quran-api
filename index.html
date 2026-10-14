@@ -10,6 +10,8 @@
     <meta name="keywords" content="quran api, al quran api, api murottal, quran rest api, tafsir api, audio quran">
     <meta name="google-site-verification" content="3ugBX7E7bXl1h0ylQTM18Y9KX2Mec4-OeDuR8JbOtbA" />
     
+    <script src="/widget.js" async></script>
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9PG1DCJC55"></script>
     <script>
@@ -160,6 +162,38 @@
         .cta-button:hover {
             background: #1d4ed8;
         }
+        
+        .attr-wrap {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .attr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .attr-table th,
+        .attr-table td {
+            text-align: left;
+            vertical-align: top;
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .attr-table th {
+            color: #64748b;
+            font-weight: 600;
+        }
+        
+        .attr-table code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }        
     </style>
 </head>
 <body>
@@ -428,6 +462,46 @@
     }
 ]</pre>
     </div>
+
+    <div class="section">
+        <h2>Widget Ayat</h2>
+    
+        <p>Tempel satu ayat lengkap dengan teks Arab, terjemahan, dan tombol putar ke situs apa pun, misalnya blog, situs masjid, atau sekolah. Cukup dua baris kode:</p>
+    
+        <pre>&lt;script src="https://quran-api-991.vercel.app/widget.js" async&gt;&lt;/script&gt;
+    &lt;div class="quran-ayah" data-surah="2" data-ayah="255"&gt;&lt;/div&gt;</pre>
+    
+        <p style="margin-top:20px">Hasilnya:</p>
+        <div class="quran-ayah" data-surah="2" data-ayah="255"></div>
+    
+        <div class="attr-wrap">
+            <table class="attr-table">
+                <thead>
+                    <tr><th>Atribut</th><th>Keterangan</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>data-surah</code></td>
+                        <td>Nomor surah (1-114). Wajib.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data-ayah</code></td>
+                        <td>Nomor ayat. Wajib.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data-theme</code></td>
+                        <td><code>light</code> (default) atau <code>dark</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data-qori</code></td>
+                        <td>Qori untuk tombol putar: <code>ar.alafasy</code> (default), <code>ar.ahmedajamy</code>, <code>ar.husarymujawwad</code>, <code>ar.minshawi</code>, <code>ar.muhammadayyoub</code>, <code>ar.muhammadjibreel</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <p>Tidak perlu menulis kode sendiri: buka <a href="/murottal">Murottal Player</a>, klik ⋮ pada ayat yang diinginkan, lalu pilih <b>Sematkan Ayat</b> untuk mendapat kode siap salin.</p>
+    </div>    
 
     <footer>
         Quran API
