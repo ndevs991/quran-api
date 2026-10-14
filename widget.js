@@ -69,9 +69,9 @@
         .play:hover { opacity: 0.85; }
 
         .arab {
-            margin: 10px 0;
+            margin: 15px 0 20px;
             direction: rtl;
-            text-align: right;
+            text-align: center;
             font-family: "QuranApiAmiri", "Traditional Arabic", Tahoma, serif;
             font-size: 28px;
             line-height: 2;
@@ -81,6 +81,7 @@
 
         .trans {
             margin: 0;
+            text-align: center;
             font-size: 14px;
             color: var(--muted);
         }
@@ -91,6 +92,7 @@
             border-top: 1px solid var(--border);
             font-size: 11px;
             color: var(--muted);
+            text-align: center;
         }
 
         .foot a { color: inherit; }
