@@ -1,6 +1,11 @@
 (function () {
     "use strict";
 
+    if (window.QuranApiWidget) {
+        window.QuranApiWidget.init();
+        return;
+    }
+
     var script = document.currentScript;
     var API_BASE = script && script.src
         ? new URL(script.src).origin
