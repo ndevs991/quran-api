@@ -1,3 +1,5 @@
+res.setHeader("Access-Control-Allow-Origin", "*");
+
 import quran from "../../../quran.json";
 
 export default function handler(req, res) {
