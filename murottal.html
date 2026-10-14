@@ -8,6 +8,8 @@
 <link rel="canonical" href="https://quran-api-991.vercel.app/murottal.html">  
 <meta name="description" content="Dengarkan murottal Al-Qur'an per surah lengkap dengan teks arab, terjemahan, dan tafsir. Pilih qori favorit Anda — gratis dan interaktif.">
 
+<script src="/widget.js" async></script>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9PG1DCJC55"></script>
 <script>
@@ -719,6 +721,45 @@
         text-align: justify;
     }
 
+    .embed-body {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .embed-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .embed-code {
+        width: 100%;
+        resize: none;
+        padding: 10px;
+        background: #0b1120;
+        border: 1px solid #1e293b;
+        border-radius: 6px;
+        color: #cbd5e1;
+        font-family: Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+    .embed-copy {
+        padding: 8px 16px;
+        background: #2563eb;
+        border: 0;
+        border-radius: 6px;
+        color: #fff;
+        font-size: 13px;
+        cursor: pointer;
+    }
+    
+    .embed-copy:hover {
+        background: #1d4ed8;
+    }  
+
     .ayah-arab {
         font-size: var(--arabic-font-size, 21px);
         line-height: 2;
@@ -952,6 +993,27 @@
     </div>
 </div>
 
+<div class="tafsir-modal-overlay" id="embedOverlay" onclick="if(event.target===this) closeEmbed()">
+    <div class="tafsir-modal">
+        <div class="tafsir-modal-head">
+            <h3 id="embedTitle">Sematkan Ayat</h3>
+            <button class="tafsir-modal-close" onclick="closeEmbed()">&times;</button>
+        </div>
+        <div class="tafsir-body embed-body">
+            <div class="embed-row">
+                <span class="setting-label">Tema</span>
+                <select id="embedTheme" class="jump-select" onchange="renderEmbed()">
+                    <option value="light">Terang</option>
+                    <option value="dark">Gelap</option>
+                </select>
+            </div>
+            <div id="embedPreview"></div>
+            <textarea id="embedCode" class="embed-code" readonly rows="4"></textarea>
+            <button class="embed-copy" onclick="copyEmbedCode()">Salin Kode</button>
+        </div>
+    </div>
+</div>
+
 <audio id="audioPlayer"></audio>
 <audio id="ayahAudioPlayer"></audio>  
 
@@ -1029,6 +1091,48 @@
         activeTafsirSource = source;
         renderTafsirBody();
     }
+
+    let embedAyah = null;
+    
+    function openEmbed(idx) {
+        embedAyah = {
+            surah: Number(audio.dataset.currentNumber),
+            ayah: currentAyahs[idx].number.inSurah
+        };
+        document.getElementById("embedTitle").textContent = `Sematkan ${currentSurahName} : ${embedAyah.ayah}`;
+        renderEmbed();
+        document.getElementById("embedOverlay").classList.add("open");
+    }
+    
+    function closeEmbed() {
+        document.getElementById("embedOverlay").classList.remove("open");
+    }
+    
+    function renderEmbed() {
+        const theme = document.getElementById("embedTheme").value;
+        const dataTheme = theme === "dark" ? ' data-theme="dark"' : "";
+    
+        document.getElementById("embedCode").value =
+    `<script src="${location.origin}/widget.js" async><\/script>
+    <div class="quran-ayah" data-surah="${embedAyah.surah}" data-ayah="${embedAyah.ayah}"${dataTheme}></div>`;
+    
+        const preview = document.getElementById("embedPreview");
+        preview.innerHTML = "";
+    
+        const div = document.createElement("div");
+        div.className = "quran-ayah";
+        div.dataset.surah = embedAyah.surah;
+        div.dataset.ayah = embedAyah.ayah;
+        div.dataset.theme = theme;
+        preview.appendChild(div);
+    
+        if (window.QuranApiWidget) window.QuranApiWidget.init(preview);
+    }
+    
+    function copyEmbedCode() {
+        navigator.clipboard.writeText(document.getElementById("embedCode").value)
+            .then(() => showToast("Kode disalin!"));
+    }  
 
     function toggleAyahMenu(event, idx) {
         event.stopPropagation();
@@ -1555,6 +1659,7 @@
                             <button onclick="copyAyah(${idx}); closeAllAyahMenus()">📋 Copy</button>
                             <button onclick="shareAyah(${ayah.number.inSurah}); closeAllAyahMenus()">🔗 Bagikan</button>
                             <button onclick="shareAyahImage(${idx}); closeAllAyahMenus()">🖼️ Bagikan Gambar Ayat</button>
+                            <button onclick="openEmbed(${idx}); closeAllAyahMenus()">🧩 Sematkan Ayat</button>
                         </div>
                     </div>
                     <p class="ayah-arab">${ayah.arab} <span style="color:#E5AF76; font-size:21px;">۝${toArabicNumber(ayah.number.inSurah)}</span></p>
