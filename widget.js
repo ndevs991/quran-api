@@ -13,7 +13,7 @@
 
     var PLAY_ICON = "\u25B6\uFE0E";
     var PAUSE_ICON = "\u275A\u275A";
-    var SHUFFLE_ICON = "\uD83D\uDD00";
+    var SHUFFLE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>';
     var ARABIC_DIGITS = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669";
 
     var CSS = `
@@ -82,13 +82,22 @@
         
         .shuffle {
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 34px;
             height: 34px;
-            border: 1px solid var(--accent);
+            padding: 0;
+            border: 0;
             border-radius: 50%;
-            background: transparent;
-            font-size: 14px;
+            background: var(--border);
+            color: var(--accent);
             cursor: pointer;
+        }
+        
+        .shuffle svg {
+            width: 16px;
+            height: 16px;
         }
         
         .shuffle:hover { opacity: 0.85; }
@@ -243,7 +252,8 @@
         }
 
         if (onShuffle) {
-            var shuffle = el("button", "shuffle", SHUFFLE_ICON);
+            var shuffle = el("button", "shuffle");
+            shuffle.innerHTML = SHUFFLE_SVG;
             shuffle.type = "button";
             shuffle.title = "Ayat acak lainnya";
             shuffle.setAttribute("aria-label", "Ayat acak lainnya");
