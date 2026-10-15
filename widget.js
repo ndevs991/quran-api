@@ -85,8 +85,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             padding: 0;
             border: 0;
             border-radius: 50%;
@@ -96,8 +96,8 @@
         }
         
         .shuffle svg {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
         }
         
         .shuffle:hover { opacity: 0.85; }
