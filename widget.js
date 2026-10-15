@@ -13,6 +13,7 @@
 
     var PLAY_ICON = "\u25B6\uFE0E";
     var PAUSE_ICON = "\u275A\u275A";
+    var SHUFFLE_ICON = "\uD83D\uDD00";
     var ARABIC_DIGITS = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669";
 
     var CSS = `
@@ -73,6 +74,27 @@
 
         .play:hover { opacity: 0.85; }
 
+        .ctrl {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .shuffle {
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            background: transparent;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .shuffle:hover { opacity: 0.85; }
+        
+        .card.loading { opacity: 0.6; }        
+
         .arab {
             margin: 15px 0 20px;
             direction: rtl;
@@ -110,6 +132,7 @@
     `;
 
     var stopActive = null;
+    var surahListPromise = null;
 
     function toArabicNumber(n) {
         return String(n).replace(/\d/g, function (d) { return ARABIC_DIGITS[d]; });
@@ -135,17 +158,58 @@
         return (audioMap && (audioMap[key] || audioMap.alafasy)) || "";
     }
 
-    function build(card, data, surah, ayah, qori) {
+    function fetchAyah(surah, ayah) {
+        return fetch(API_BASE + "/ayahs/" + surah + "/" + ayah).then(function (res) {
+            if (!res.ok) throw new Error("not found");
+            return res.json();
+        });
+    }
+    
+    function showError(card) {
+        card.textContent = "";
+        card.appendChild(el("p", "msg", "Ayat tidak ditemukan."));
+    }
+    
+    function getSurahs() {
+        if (!surahListPromise) {
+            surahListPromise = fetch(API_BASE + "/surahs")
+                .then(function (res) {
+                    if (!res.ok) throw new Error("failed");
+                    return res.json();
+                })
+                .catch(function (err) {
+                    surahListPromise = null;
+                    throw err;
+                });
+        }
+        return surahListPromise;
+    }
+    
+    function pickRandom(list) {
+        var total = list.reduce(function (sum, s) { return sum + s.numberOfAyahs; }, 0);
+        if (!total) return null;
+    
+        var r = Math.floor(Math.random() * total);
+        for (var i = 0; i < list.length; i++) {
+            if (r < list[i].numberOfAyahs) return { surah: list[i].number, ayah: r + 1 };
+            r -= list[i].numberOfAyahs;
+        }
+        return null;
+    }    
+
+    function build(card, data, surah, ayah, qori, onShuffle) {
         var info = data.ayah;
         card.textContent = "";
 
         var head = el("div", "head");
         head.appendChild(el("span", "ref", data.surah.name + " : " + info.number.inSurah));
 
+        var ctrl = el("div", "ctrl");
         var play = el("button", "play", PLAY_ICON);
         play.type = "button";
         play.setAttribute("aria-label", "Putar ayat");
-        head.appendChild(play);
+        ctrl.appendChild(play);
+        head.appendChild(ctrl);
         card.appendChild(head);
 
         var arab = el("p", "arab", info.arab + " ");
@@ -178,6 +242,19 @@
             setPlaying(false);
         }
 
+        if (onShuffle) {
+            var shuffle = el("button", "shuffle", SHUFFLE_ICON);
+            shuffle.type = "button";
+            shuffle.title = "Ayat acak lainnya";
+            shuffle.setAttribute("aria-label", "Ayat acak lainnya");
+            shuffle.addEventListener("click", function () {
+                stop();
+                if (stopActive === stop) stopActive = null;
+                onShuffle();
+            });
+            ctrl.insertBefore(shuffle, play);
+        }
+
         play.addEventListener("click", function () {
             if (!url) return;
 
@@ -200,40 +277,56 @@
             audio.play().catch(function () { setPlaying(false); });
         });
     }
-
+    
     function render(host) {
         if (host.getAttribute("data-qa-ready")) return;
         host.setAttribute("data-qa-ready", "1");
-
+    
         var surah = Number(host.getAttribute("data-surah"));
         var ayah = Number(host.getAttribute("data-ayah"));
         var qori = host.getAttribute("data-qori") || "ar.alafasy";
         var theme = host.getAttribute("data-theme") === "dark" ? "dark" : "light";
-
+    
         var root = host.attachShadow({ mode: "open" });
         var style = document.createElement("style");
         style.textContent = CSS;
         var card = el("div", "card " + theme);
         root.appendChild(style);
         root.appendChild(card);
-
+    
         if (!Number.isInteger(surah) || surah < 1 || surah > 114 || !Number.isInteger(ayah) || ayah < 1) {
             card.appendChild(el("p", "msg", "data-surah atau data-ayah tidak valid."));
             return;
         }
-
+    
+        var busy = false;
+    
+        function shuffle() {
+            if (busy) return;
+            busy = true;
+            card.classList.add("loading");
+    
+            getSurahs()
+                .then(function (list) {
+                    var pick = pickRandom(list);
+                    if (!pick) throw new Error("empty");
+    
+                    return fetchAyah(pick.surah, pick.ayah).then(function (data) {
+                        build(card, data, pick.surah, pick.ayah, qori, shuffle);
+                    });
+                })
+                .catch(function () {})
+                .then(function () {
+                    busy = false;
+                    card.classList.remove("loading");
+                });
+        }
+    
         card.appendChild(el("p", "msg", "Memuat ayat ..."));
-
-        fetch(API_BASE + "/ayahs/" + surah + "/" + ayah)
-            .then(function (res) {
-                if (!res.ok) throw new Error("not found");
-                return res.json();
-            })
-            .then(function (data) { build(card, data, surah, ayah, qori); })
-            .catch(function () {
-                card.textContent = "";
-                card.appendChild(el("p", "msg", "Ayat tidak ditemukan."));
-            });
+    
+        fetchAyah(surah, ayah)
+            .then(function (data) { build(card, data, surah, ayah, qori, shuffle); })
+            .catch(function () { showError(card); });
     }
 
     function init(scope) {
