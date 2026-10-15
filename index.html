@@ -3,11 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quran API — Al-Qur'an, Murottal & Tafsir</title>
+    <title>Quran API Gratis — Al-Qur'an, Audio Murottal & Tafsir</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="canonical" href="https://quran-api-991.vercel.app/">
-    <meta name="description" content="Quran API gratis — REST API untuk data Al-Qur'an: teks arab, terjemahan, tafsir, audio murottal per surah dari berbagai qori. Termasuk Murottal Player interaktif.">
+    <meta name="description" content="Gunakan Quran API gratis untuk mengakses teks Al-Qur'an, terjemahan, tafsir, audio murottal berbagai qori, dan widget ayat untuk website.">
     <meta name="keywords" content="quran api, al quran api, api murottal, quran rest api, tafsir api, audio quran">
+	
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Quran API Gratis — Al-Qur'an, Audio Murottal & Tafsir">
+	<meta property="og:description" content="Akses teks Al-Qur'an, terjemahan, tafsir, audio murottal berbagai qori, dan widget ayat melalui Quran API gratis.">
+	<meta property="og:url" content="https://quran-api-991.vercel.app/">
+	<meta property="og:image" content="https://quran-api-991.vercel.app/og-image.png">
+
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Quran API Gratis — Al-Qur'an, Audio Murottal & Tafsir">
+	<meta name="twitter:description" content="Akses teks Al-Qur'an, terjemahan, tafsir, audio murottal berbagai qori, dan widget ayat melalui Quran API gratis.">
+	<meta name="twitter:image" content="https://quran-api-991.vercel.app/og-image.png">
+	
     <meta name="google-site-verification" content="3ugBX7E7bXl1h0ylQTM18Y9KX2Mec4-OeDuR8JbOtbA" />
     
     <script src="/widget.js" async></script>
@@ -193,7 +205,75 @@
             border-radius: 4px;
             font-family: Consolas, monospace;
             font-size: 13px;
-        }        
+        }
+
+		.about-quran-api {
+			max-width: 100%;
+			margin: 40px auto 0;
+			padding: 28px;
+			background: #fff;
+			border: 1px solid #e5e7eb;
+			border-radius: 12px;
+			color: #374151;
+			font-size: 15px;
+			line-height: 1.8;
+		}
+
+		.about-quran-api h2 {
+			margin: 30px 0 12px;
+			color: #111827;
+			font-size: 23px;
+			font-weight: 700;
+			line-height: 1.4;
+		}
+
+		.about-quran-api h2:first-child {
+			margin-top: 0;
+		}
+
+		.about-quran-api h3 {
+			margin: 22px 0 8px;
+			color: #1f2937;
+			font-size: 18px;
+			font-weight: 600;
+			line-height: 1.5;
+		}
+
+		.about-quran-api p {
+			margin: 0 0 16px;
+			text-align: justify;
+		}
+
+		.about-quran-api code {
+			padding: 2px 6px;
+			background: #f3f4f6;
+			border-radius: 4px;
+			color: #047857;
+			font-size: 0.9em;
+		}
+
+		@media (max-width: 768px) {
+			.about-quran-api {
+				margin-top: 24px;
+				padding: 18px;
+				font-size: 14px;
+				line-height: 1.75;
+			}
+
+			.about-quran-api h2 {
+				margin-top: 24px;
+				font-size: 20px;
+			}
+
+			.about-quran-api h3 {
+				margin-top: 18px;
+				font-size: 17px;
+			}
+
+			.about-quran-api p {
+				text-align: left;
+			}
+		}        
     </style>
 </head>
 <body>
@@ -454,13 +534,15 @@
 
         <div id="qoriahResult" class="demo-result"></div>
 
-        <pre>[
-    {
-        "identifier": "ar.alafasy",
-        "name": "Mishary Rashid Alafasy",
-        "language": "ar"
-    }
-]</pre>
+		<pre>
+		[
+			{
+				"identifier": "ar.alafasy",
+				"name": "Mishary Rashid Alafasy",
+				"language": "ar"
+			}
+		]
+		</pre>
     </div>
 
     <div class="section">
@@ -502,10 +584,60 @@
         </div>
     
         <p>Tidak perlu menulis kode sendiri: buka <a href="/murottal">Murottal Player</a>, klik ⋮ pada ayat yang diinginkan, lalu pilih <b>Sematkan Ayat</b> untuk mendapat kode siap salin.</p>
-    </div>    
+    </div>
+
+	<section class="about-quran-api">
+		<h2>Tentang Quran API</h2>
+		<p>Quran API adalah layanan REST API untuk mengakses data Al-Qur'an dalam format JSON. API ini dapat digunakan oleh pengembang untuk membuat website, aplikasi mobile, platform pembelajaran Islam, dan berbagai proyek digital yang membutuhkan data Al-Qur'an. Dengan format respons yang terstruktur, data dapat diolah menggunakan JavaScript, PHP, maupun bahasa pemrograman lain yang mendukung permintaan HTTP.</p>
+		<p>Melalui endpoint yang tersedia, pengembang dapat mengintegrasikan informasi surah, ayat, terjemahan, serta audio murottal sesuai dukungan masing-masing endpoint. Quran API juga menyediakan dokumentasi penggunaan agar pengembang dapat memahami alamat endpoint, parameter permintaan, dan struktur respons sebelum mengintegrasikannya ke dalam aplikasi.</p>
+
+		<h2>Fitur Quran API</h2>
+
+		<h3>Data Surah Al-Qur'an</h3>
+		<p>Data surah dapat digunakan untuk membuat daftar surah, halaman informasi surah, dan navigasi bacaan Al-Qur'an. Aplikasi dapat memanfaatkan informasi yang dikembalikan API untuk menampilkan daftar surah sehingga pengguna dapat memilih surah yang ingin dibaca. Fitur ini berguna untuk website Al-Qur'an digital, aplikasi pendidikan, maupun proyek pribadi yang membutuhkan struktur data surah.</p>
+
+		<h3>Teks Ayat dan Terjemahan</h3>
+		<p>Data ayat memungkinkan pengembang menampilkan teks Arab Al-Qur'an beserta terjemahan yang tersedia. Informasi tersebut dapat disusun menjadi halaman bacaan yang mudah digunakan pada perangkat desktop maupun ponsel. Pengembang juga dapat mengatur ukuran tulisan Arab, jarak antarbaris, warna teks, dan tata letak terjemahan sesuai kebutuhan desain aplikasi.</p>
+
+		<h3>Audio Murottal Berbagai Qori</h3>
+		<p>Audio murottal dapat digunakan untuk menambahkan pengalaman mendengarkan bacaan Al-Qur'an ke dalam website atau aplikasi. Pengembang dapat membuat pemutar audio dengan kontrol putar, jeda, dan navigasi surah sesuai fitur yang didukung oleh implementasi mereka. Ketersediaan audio bergantung pada qori dan surah yang tersedia pada sumber data masing-masing.</p>
+
+		<h3>Pencarian Ayat</h3>
+		<p>Endpoint pencarian dapat membantu pengguna menemukan data berdasarkan kata kunci dan parameter yang didukung. Fitur pencarian dapat dikembangkan menjadi fasilitas pencarian pada website Al-Qur'an, halaman referensi ayat, atau aplikasi pembelajaran. Untuk mendapatkan hasil yang sesuai, pengembang perlu mengikuti format parameter pencarian yang dijelaskan dalam dokumentasi endpoint.</p>
+
+		<h3>Data Juz dan Ayat Acak</h3>
+		<p>Informasi juz dapat dimanfaatkan untuk membuat navigasi bacaan berdasarkan pembagian juz Al-Qur'an. Sementara itu, fitur ayat acak dapat digunakan untuk menampilkan ayat pilihan pada halaman utama, widget harian, atau bagian inspirasi pada website. Pastikan penggunaan masing-masing fitur mengikuti endpoint dan format respons yang tersedia pada dokumentasi.</p>
+
+		<h2>Cara Menggunakan Quran API</h2>
+		<p>Untuk mulai menggunakan Quran API, buka bagian Base URL dan Endpoints pada halaman dokumentasi ini. Pilih endpoint sesuai data yang dibutuhkan, lalu periksa contoh URL, parameter, dan respons JSON yang dihasilkan. Pengujian awal melalui browser dapat membantu memahami struktur data sebelum endpoint digunakan di dalam kode aplikasi.</p>
+
+		<h3>Integrasi dengan JavaScript</h3>
+		<p>JavaScript dapat mengambil data API menggunakan fungsi <code>fetch()</code>. Setelah respons berhasil diterima, data JSON dapat diolah untuk membuat daftar surah, menampilkan ayat, atau memperbarui konten halaman secara dinamis. Pengembang sebaiknya menangani kondisi ketika permintaan gagal, respons tidak sesuai harapan, atau data yang dibutuhkan tidak tersedia.</p>
+
+		<h3>Integrasi dengan PHP</h3>
+		<p>Aplikasi PHP dapat mengirim permintaan HTTP ke endpoint API, membaca respons JSON, kemudian mengolahnya untuk ditampilkan pada halaman website. Pendekatan ini dapat digunakan pada website yang menggunakan PHP sebagai bahasa pemrograman server. Pastikan respons API diperiksa sebelum digunakan dan data yang ditampilkan di halaman HTML ditangani dengan benar.</p>
+
+		<h2>Widget Ayat Al-Qur'an</h2>
+		<p>Widget Ayat memungkinkan pemilik website menampilkan ayat Al-Qur'an pada halaman mereka melalui elemen HTML yang disediakan. Fitur ini dapat berguna untuk blog pribadi, website masjid, sekolah, lembaga pendidikan Islam, dan komunitas Muslim yang ingin menyertakan ayat dalam konten mereka.</p>
+		<p>Pengembang dapat menentukan surah dan ayat melalui atribut widget sesuai dokumentasi yang tersedia. Jika didukung oleh implementasi widget, tampilan dapat mencakup teks Arab, terjemahan, serta kontrol untuk memutar audio. Periksa bagian Widget Ayat di halaman ini untuk melihat contoh kode pemasangan dan atribut yang dapat digunakan.</p>
+
+		<h3>Cara Memasang Widget</h3>
+		<p>Salin kode widget dari bagian dokumentasi, kemudian tempatkan elemen HTML pada posisi halaman tempat ayat ingin ditampilkan. Pastikan file JavaScript widget dapat diakses oleh browser dan atribut surah serta ayat diisi dengan nilai yang sesuai. Setelah dipasang, buka halaman website untuk memeriksa apakah widget tampil dan berfungsi sebagaimana mestinya.</p>
+
+		<h2>Penggunaan Quran API untuk Berbagai Proyek</h2>
+		<p>Quran API dapat dimanfaatkan sebagai sumber data untuk beragam proyek digital, seperti website bacaan Al-Qur'an, aplikasi pembelajaran, pemutar audio murottal, dan halaman referensi ayat. Data yang tersedia dapat diintegrasikan dengan antarmuka buatan sendiri sehingga pengembang memiliki keleluasaan dalam menentukan tampilan dan alur penggunaan aplikasi.</p>
+		<p>Untuk proyek pendidikan, data ayat dan terjemahan dapat digunakan sebagai bagian dari materi belajar. Untuk website komunitas, widget ayat dapat membantu menampilkan konten Al-Qur'an tanpa harus membangun seluruh komponen dari awal. Sementara itu, aplikasi yang berfokus pada audio dapat menggunakan informasi murottal sesuai ketersediaan sumber audio yang didukung.</p>
+
+		<h2>Dokumentasi dan Panduan Pengembang</h2>
+		<p>Sebelum mengintegrasikan API ke dalam proyek, pelajari Base URL, daftar Endpoints, dan contoh respons yang tersedia pada halaman ini. Perhatikan parameter yang wajib dikirim, struktur JSON yang dikembalikan, serta kemungkinan kondisi ketika data tidak ditemukan. Pengujian endpoint secara terpisah akan membantu proses integrasi dan memudahkan penelusuran kesalahan.</p>
+		<p>Pengembang juga disarankan untuk menangani kegagalan jaringan, memeriksa status respons, dan menampilkan pesan yang informatif ketika data tidak dapat dimuat. Jika aplikasi menampilkan teks Arab, pastikan halaman menggunakan encoding UTF-8 dan memilih font yang mendukung karakter Arab. Pengaturan tata letak dari kanan ke kiri dapat digunakan jika sesuai dengan desain halaman.</p>
+
+		<h2>Mulai Integrasi Quran API</h2>
+		<p>Gunakan contoh endpoint dan kode yang tersedia pada dokumentasi sebagai titik awal pengembangan. Pilih hanya fitur yang diperlukan oleh proyek, lalu sesuaikan pemrosesan data dan tampilan dengan kebutuhan pengguna. Dengan memahami struktur respons dan batasan setiap endpoint, pengembang dapat membangun pengalaman membaca, mencari, dan mendengarkan Al-Qur'an yang sesuai dengan tujuan website atau aplikasi mereka.</p>
+	</section>  
 
     <footer>
-        Quran API
+        Quran API Gratis
     </footer>
 
 </div>
