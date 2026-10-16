@@ -19,11 +19,6 @@ REST API gratis untuk mengakses data Al-Qur'an: teks ayat, terjemahan, tafsir, a
 
 https://quran-api-991.vercel.app/
 
-
-## Base URL
-
-https://quran-api-991.vercel.app/
-
 ## Endpoints
 
 | Method | Endpoint | Keterangan |
