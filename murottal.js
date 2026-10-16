@@ -25,7 +25,11 @@ let activeTafsirIndex = null;
 let activeTafsirSource = "kemenag";
 let searchTimer;
 let searchMode = "surah";
-let searchRequestId = 0;  
+let searchRequestId = 0;
+const juzSelect = document.getElementById("juzSelect");
+for (let i = 1; i <= 30; i++) juzSelect.add(new Option(`Juz ${i}`, i));
+let currentJuz = 0;
+const juzCache = new Map();  
 
 let playMode = localStorage.getItem("playMode") === "ayah" ? "ayah" : "surah";
 let currentAyahIndex = -1;
@@ -70,6 +74,65 @@ function closeTafsir() {
 function switchTafsirTab(source) {
     activeTafsirSource = source;
     renderTafsirBody();
+}
+
+async function getJuzSurahs(juz) {
+    if (juzCache.has(juz)) return juzCache.get(juz);
+    if (!surahs.length) throw new Error("daftar surah belum dimuat");
+
+    const res = await fetch(`${API_BASE}/juz/${juz}`);
+    if (!res.ok) throw new Error("juz gagal dimuat");
+    const data = await res.json();
+
+    const ranges = new Map();
+    data.ayahs.forEach(a => {
+        const n = a.number.inSurah;
+        const r = ranges.get(a.surah.number);
+        if (r) {
+            r.from = Math.min(r.from, n);
+            r.to = Math.max(r.to, n);
+        } else {
+            ranges.set(a.surah.number, { from: n, to: n });
+        }
+    });
+
+    const list = [];
+    ranges.forEach((r, number) => {
+        const surah = surahs.find(s => s.number === number);
+        if (!surah) return;
+        list.push({
+            ...surah,
+            from: r.from,
+            range: r.from === r.to ? `ayat ${r.from}` : `ayat ${r.from}–${r.to}`
+        });
+    });
+
+    juzCache.set(juz, list);
+    return list;
+}
+
+async function refreshSurahList() {
+    const q = searchInput.value.trim().toLowerCase();
+    const juz = currentJuz;
+    let list = surahs;
+
+    if (juz) {
+        if (!juzCache.has(juz)) showSearchMessage("Memuat ...");
+        try {
+            list = await getJuzSurahs(juz);
+        } catch (err) {
+            if (juz === currentJuz) showSearchMessage("Gagal memuat juz.");
+            return;
+        }
+        if (juz !== currentJuz || searchMode !== "surah") return;
+    }
+
+    renderSurahList(list.filter(s => s.name.toLowerCase().includes(q)));
+}
+
+function setJuz(value) {
+    currentJuz = Number(value);
+    refreshSurahList();
 }
 
 let embedAyah = null;
@@ -549,11 +612,14 @@ function renderSurahList(list) {
             <span class="surah-number">${surah.number}</span>
             <span class="surah-info">
                 <span class="surah-name">${surah.name}</span>
-                <span class="surah-meta">${surah.translation} · ${surah.numberOfAyahs} ayat</span>
+                <span class="surah-meta">${surah.translation} · ${surah.range || surah.numberOfAyahs + " ayat"}</span>
             </span>
             <span class="surah-arab" aria-hidden="true">surah${String(surah.number).padStart(3, "0")}</span>
         `;
-        btn.onclick = () => playSurahByNumber(surah.number);
+        btn.onclick = () => {
+            if (surah.from > 1) openAyah(surah.number, surah.from);
+            else playSurahByNumber(surah.number);
+        };
         surahListEl.appendChild(btn);
     });
 }
@@ -728,8 +794,7 @@ searchInput.oninput = () => {
     document.getElementById("searchClear").style.display = value ? "flex" : "none";
 
     if (searchMode === "surah") {
-        const q = value.toLowerCase();
-        renderSurahList(surahs.filter(s => s.name.toLowerCase().includes(q)));
+        refreshSurahList();
         return;
     }
 
@@ -744,7 +809,7 @@ function clearSearch() {
     searchRequestId++;
 
     if (searchMode === "surah") {
-        renderSurahList(surahs);
+        refreshSurahList();
     } else {
         showSearchMessage("Ketik minimal 3 huruf untuk mencari ayat.");
     }
@@ -791,6 +856,13 @@ function setSearchMode(mode) {
     searchInput.placeholder = mode === "surah"
         ? "Cari nama surat ..."
         : "Cari ayat ...";
+
+    juzSelect.disabled = mode === "ayah";
+    if (mode === "ayah") {
+        juzSelect.value = "0";
+        currentJuz = 0;
+    }
+
     clearSearch();
 }
 
