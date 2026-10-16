@@ -813,6 +813,25 @@ input[type="range"] {
     border-radius: 3px;
 }
 
+.page-footer {
+	width: 100%;
+	max-width: 900px;
+	margin: auto;
+	text-align: center;
+	padding: 5px 0;
+}
+
+.page-footer a {
+	font-size: 11px;
+	color: #64748b;
+	text-decoration: none;
+}
+
+.page-footer a:hover {
+	/* text-decoration: underline; */
+	color: #7dd3fc;
+}
+
 @media (max-width: 768px) {
     body {
         height: auto;
