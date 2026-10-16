@@ -31,16 +31,19 @@
       <div class="panel panel-list">
           <div class="search-box">
               <div class="search-input-wrapper">
-                  <select id="searchModeSelect" class="search-mode-select" onchange="setSearchMode(this.value)">
-                      <option value="surah">Surah</option>
-                      <option value="ayah">Ayat</option>
-                  </select>              
-                  <input type="text" id="searchInput" placeholder="Cari nama surat ...">
-                  <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                          <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      </svg>
-                  </button>
+					<select id="searchModeSelect" class="search-mode-select" onchange="setSearchMode(this.value)">
+						<option value="surah">Surah</option>
+						<option value="ayah">Ayat</option>
+					</select>              
+					<input type="text" id="searchInput" placeholder="Cari nama surat ...">
+					<select id="juzSelect" class="juz-select" onchange="setJuz(this.value)">
+						<option value="0">Semua juz</option>
+					</select>					
+					<button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">
+						<svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+							<path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+						</svg>
+					</button>			  
               </div>
               <button class="settings-btn" onclick="toggleSettingsPopover(event)">⚙️</button>
           
