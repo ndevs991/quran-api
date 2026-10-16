@@ -110,12 +110,12 @@ body {
 
 .search-input-wrapper input {
     width: 100%;
-    padding: 10px 32px 10px 80px;
+    padding: 10px 116px 10px 80px;
 }
 
 .search-clear {
     position: absolute;
-    right: 6px;
+    right: 90px;
     top: 50%;
     transform: translateY(-50%);
     width: 20px;
@@ -135,6 +135,26 @@ body {
 .search-clear:hover {
     background: #2b3648;
     color: #e2e8f0;
+}
+
+.juz-select {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 78px;
+    padding: 4px 6px;
+    background: #1e293b;
+    border: 0;
+    border-radius: 4px;
+    color: #7dd3fc;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.juz-select:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .settings-btn {
