@@ -43,7 +43,7 @@ body {
     gap: 16px;
     width: 100%;
     max-width: 900px;
-    margin: auto;
+    margin: 0 auto;
     height: 460px;
 }
 
@@ -816,7 +816,7 @@ input[type="range"] {
 .page-footer {
 	width: 100%;
 	max-width: 900px;
-	margin: auto;
+	margin: 0 auto;
 	text-align: center;
 	padding: 5px 0;
 }
