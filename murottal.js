@@ -29,7 +29,6 @@ let searchRequestId = 0;
 const juzSelect = document.getElementById("juzSelect");
 for (let i = 1; i <= 30; i++) juzSelect.add(new Option(`Juz ${i}`, i));
 let currentJuz = 0;
-const juzCache = new Map();  
 
 let playMode = localStorage.getItem("playMode") === "ayah" ? "ayah" : "surah";
 let currentAyahIndex = -1;
@@ -76,39 +75,71 @@ function switchTafsirTab(source) {
     renderTafsirBody();
 }
 
+let juzSession = null;
+let juzTable = null;
+let juzTablePromise = null;
+const juzStarts = {};
+
+function isAyahMode() {
+    return playMode === "ayah" || juzSession !== null;
+}
+
+function getJuzTable() {
+    if (!juzTablePromise) {
+        juzTablePromise = fetch(`${API_BASE}/juz`)
+            .then(res => {
+                if (!res.ok) throw new Error("juz gagal dimuat");
+                return res.json();
+            })
+            .then(table => {
+                juzTable = table;
+                table.forEach(j => {
+                    const first = j.surahs[0];
+                    juzStarts[`${first.number}:${first.from}`] = j.juz;
+                });
+                return table;
+            })
+            .catch(err => {
+                juzTablePromise = null;
+                throw err;
+            });
+    }
+    return juzTablePromise;
+}
+
+function juzMarker(surahNumber, ayahNumber) {
+    const juz = juzStarts[`${surahNumber}:${ayahNumber}`];
+    return juz ? `<div class="juz-marker">Juz ${juz}</div>` : "";
+}
+
+async function startJuz(surah) {
+    const table = await getJuzTable();
+    const rows = table[currentJuz - 1].surahs;
+    const last = rows[rows.length - 1];
+
+    openAyah(surah.number, surah.from, {
+        juz: currentJuz,
+        endSurah: last.number,
+        endAyah: last.to
+    });
+}
+
 async function getJuzSurahs(juz) {
-    if (juzCache.has(juz)) return juzCache.get(juz);
     if (!surahs.length) throw new Error("daftar surah belum dimuat");
+    const table = await getJuzTable();
 
-    const res = await fetch(`${API_BASE}/juz/${juz}`);
-    if (!res.ok) throw new Error("juz gagal dimuat");
-    const data = await res.json();
-
-    const ranges = new Map();
-    data.ayahs.forEach(a => {
-        const n = a.number.inSurah;
-        const r = ranges.get(a.surah.number);
-        if (r) {
-            r.from = Math.min(r.from, n);
-            r.to = Math.max(r.to, n);
-        } else {
-            ranges.set(a.surah.number, { from: n, to: n });
-        }
-    });
-
-    const list = [];
-    ranges.forEach((r, number) => {
-        const surah = surahs.find(s => s.number === number);
-        if (!surah) return;
-        list.push({
-            ...surah,
-            from: r.from,
-            range: r.from === r.to ? `ayat ${r.from}` : `ayat ${r.from}–${r.to}`
-        });
-    });
-
-    juzCache.set(juz, list);
-    return list;
+    return table[juz - 1].surahs
+        .map(r => {
+            const surah = surahs.find(s => s.number === r.number);
+            if (!surah) return null;
+            return {
+                ...surah,
+                from: r.from,
+                to: r.to,
+                range: r.from === r.to ? `ayat ${r.from}` : `ayat ${r.from}–${r.to}`
+            };
+        })
+        .filter(Boolean);
 }
 
 async function refreshSurahList() {
@@ -117,7 +148,7 @@ async function refreshSurahList() {
     let list = surahs;
 
     if (juz) {
-        if (!juzCache.has(juz)) showSearchMessage("Memuat ...");
+        if (!juzTable) showSearchMessage("Memuat ...");
         try {
             list = await getJuzSurahs(juz);
         } catch (err) {
@@ -211,7 +242,9 @@ async function prefetchAyah(idx) {
 }
 
 function scrollToAyahItem(el) {
-    const delta = el.getBoundingClientRect().top - playerBodyInner.getBoundingClientRect().top - 12;
+    const prev = el.previousElementSibling;
+    const anchor = prev && prev.classList.contains("juz-marker") ? prev : el;
+    const delta = anchor.getBoundingClientRect().top - playerBodyInner.getBoundingClientRect().top - 12;
     if (Math.abs(delta) < 1) return;
 
     const before = playerBodyInner.scrollTop;
@@ -285,7 +318,7 @@ function copyAyah(idx) {
 const ayahAudio = document.getElementById("ayahAudioPlayer");
 
 async function playAyah(idx) {
-    if (playMode === "ayah") {
+    if (isAyahMode()) {
         playAyahAt(idx);
         return;
     }  
@@ -505,7 +538,7 @@ function enableAutoScroll() {
     autoScrollEnabled = true;
     autoScrollBtn.style.display = "none";
 
-    if (playMode === "ayah") {
+    if (isAyahMode()) {
         const el = document.querySelector(".ayah-item.playing");
         if (el) scrollToAyahItem(el);
     }
@@ -530,7 +563,7 @@ function populateJumpAyahSelect() {
 function jumpToAyah(ayahNumber) {
     if (!ayahNumber) return;
   
-    if (playMode === "ayah") {
+    if (isAyahMode()) {
         const idx = currentAyahs.findIndex(a => a.number.inSurah === Number(ayahNumber));
         if (idx !== -1) playAyahAt(idx);
         document.getElementById("jumpAyahSelect").value = "";
@@ -616,10 +649,10 @@ function renderSurahList(list) {
             </span>
             <span class="surah-arab" aria-hidden="true">surah${String(surah.number).padStart(3, "0")}</span>
         `;
-        btn.onclick = () => {
-            if (surah.from > 1) openAyah(surah.number, surah.from);
-            else playSurahByNumber(surah.number);
-        };
+		btn.onclick = () => {
+			if (currentJuz && surah.from) startJuz(surah);
+			else playSurahByNumber(surah.number);
+		};
         surahListEl.appendChild(btn);
     });
 }
@@ -641,9 +674,10 @@ function toArabicNumber(number) {
     return String(number).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 }
 
-async function playSurahByNumber(number, autoplay = true) {
+async function playSurahByNumber(number, autoplay = true, keepSession = false) {
     const surah = surahs.find(s => s.number === number);
     if (!surah) return;
+	if (!keepSession) juzSession = null;
 
     ayahAudio.pause();
     audio.pause();
@@ -673,11 +707,12 @@ async function playSurahByNumber(number, autoplay = true) {
         const qori = getSelectedQori();
         const [detailRes, audioRes] = await Promise.all([
             fetch(`${API_BASE}/surahs/${surah.number}`),
-            playMode === "surah"
+            !isAyahMode()
                 ? fetch(`${API_BASE}/surahs/${surah.number}/audio?qori=${qori}`)
                 : Promise.resolve(null)
         ]);
         const detail = await detailRes.json();
+		await getJuzTable().catch(() => null);
         
         audio.dataset.currentNumber = surah.number;
         if (audioRes) {
@@ -695,8 +730,9 @@ async function playSurahByNumber(number, autoplay = true) {
 
         populateJumpAyahSelect();
 
-        const ayahsHtml = detail.ayahs.map((ayah, idx) => `
-            <div class="ayah-item" data-ayah="${ayah.number.inSurah}">
+		const ayahsHtml = detail.ayahs.map((ayah, idx) => `
+			${juzMarker(surah.number, ayah.number.inSurah)}
+			<div class="ayah-item" data-ayah="${ayah.number.inSurah}">
                 <div class="ayah-menu">
                     <button class="tafsir-btn" onclick="toggleAyahMenu(event, ${idx})">&#8942;</button>
                     <div class="ayah-dropdown" id="ayahDropdown-${idx}">
@@ -719,22 +755,36 @@ async function playSurahByNumber(number, autoplay = true) {
 
         playBtn.disabled = false;
         seekBar.disabled = false;
-        if (playMode === "ayah" && autoplay) playAyahAt(0);
+        if (isAyahMode() && autoplay) playAyahAt(0);
     } catch (err) {
         document.getElementById("playerContent").innerHTML = `<span id="playerText">Gagal memuat audio.</span>`;
     }
 }
 
 audio.onended = () => {
-    if (playMode === "ayah" && currentAyahIndex + 1 < currentAyahs.length) {
-        playAyahAt(currentAyahIndex + 1);
-        return;
+    if (isAyahMode()) {
+        if (juzSession) {
+            const ayah = currentAyahs[currentAyahIndex];
+            const atEnd = Number(audio.dataset.currentNumber) === juzSession.endSurah
+                && ayah.number.inSurah >= juzSession.endAyah;
+
+            if (atEnd) {
+                showToast(`Juz ${juzSession.juz} selesai`);
+                juzSession = null;
+                return;
+            }
+        }
+
+        if (currentAyahIndex + 1 < currentAyahs.length) {
+            playAyahAt(currentAyahIndex + 1);
+            return;
+        }
     }
 
     const current = Number(audio.dataset.currentNumber);
     const next = surahs.find(s => s.number === current + 1);
     if (next) {
-        playSurahByNumber(next.number);
+        playSurahByNumber(next.number, true, true);
     }
 };
 
@@ -762,7 +812,7 @@ audio.ontimeupdate = () => {
         durationEl.textContent = formatTime(audio.duration);
 
         const startOffset = 10;
-        if (playMode === "surah" && autoScrollEnabled && audio.currentTime >= startOffset) {
+        if (!isAyahMode() && autoScrollEnabled && audio.currentTime >= startOffset) {
             const inner = document.querySelector(".player-body-inner");
             const progress = (audio.currentTime - startOffset) / (audio.duration - startOffset);
             const adjustedProgress = Math.min(1, Math.max(0, progress * autoScrollSpeed));
@@ -923,14 +973,16 @@ function renderAyahResults(data, q) {
     surahListEl.scrollTop = 0;
 }
 
-function openAyah(surahNumber, ayahNumber) {
-    playSurahByNumber(surahNumber, false).then(() => {
+function openAyah(surahNumber, ayahNumber, session = null) {
+    juzSession = session;
+
+    playSurahByNumber(surahNumber, false, true).then(() => {
         if (Number(audio.dataset.currentNumber) !== surahNumber) return;
 
         const idx = currentAyahs.findIndex(a => a.number.inSurah === ayahNumber);
         if (idx === -1) return;
 
-        if (playMode === "ayah") {
+        if (isAyahMode()) {
             playAyahAt(idx);
             return;
         }
@@ -956,6 +1008,7 @@ saveQoriBtn.onclick = () => {
 };
 
 async function init() {
+    getJuzTable().catch(() => {});
     await Promise.all([loadSurahs(), loadQoriahs()]);
     checkUrlParams();
 }
