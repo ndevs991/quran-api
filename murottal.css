@@ -157,6 +157,26 @@ body {
     cursor: not-allowed;
 }
 
+.juz-marker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 4px;
+    color: #E5AF76;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.juz-marker::before,
+.juz-marker::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(229, 175, 118, 0.35);
+}
+
 .settings-btn {
     width: 30px;
     height: 30px;
