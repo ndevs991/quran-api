@@ -32,6 +32,10 @@
             "source": "/search",
             "destination": "/api/search"
         },
+		{
+			"source": "/juz",
+			"destination": "/api/juz"
+		},		
         {
             "source": "/juz/:number",
             "destination": "/api/juz/:number"
