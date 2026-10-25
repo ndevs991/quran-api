@@ -95,10 +95,7 @@ module.exports = (req, res) => {
             ayah.transliteration ||
             '';
 
-        const ayahNumber =
-            ayah.numberInSurah ||
-            ayah.number ||
-            index + 1;
+        const ayahNumber = ayah.number?.inSurah || index + 1;
 
         return `
         <article class="ayah" id="ayah-${escapeHtml(ayahNumber)}">
