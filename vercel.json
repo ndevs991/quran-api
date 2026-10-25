@@ -47,7 +47,11 @@
         {
             "source": "/ayahs/:surah/:ayah/audio",
             "destination": "/api/ayahs/:surah/:ayah/audio"
-        },        
+        },
+		{
+			"source": "/murottal/:slug",
+			"destination": "/api/murottal?slug=:slug"
+		},        
         {
             "source": "/murottal",
             "destination": "/murottal.html"
