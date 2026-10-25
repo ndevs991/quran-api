@@ -51,7 +51,7 @@
 		{
 			"source": "/murottal/:slug",
 			"destination": "/api/index?slug=:slug"
-		},        
+		}, 
         {
             "source": "/murottal",
             "destination": "/murottal.html"
