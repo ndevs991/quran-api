@@ -50,7 +50,7 @@
         },
 		{
 			"source": "/murottal/:slug",
-			"destination": "/api/murottal?slug=:slug"
+			"destination": "/api/index?slug=:slug"
 		},        
         {
             "source": "/murottal",
